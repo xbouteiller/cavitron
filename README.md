@@ -5,7 +5,7 @@ Python package ParseClass for parsing JAGS log output (generated from R capture.
 Example of use :
 
 ```python
-python parser.py --source "C:/Users/Xavier/Thèse/EXP 2017/Suivi EXP/AVRIL18/pheno_12P" --param "QST" 
+python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\pheno_12P" --param "QST" 
 --filename "bilan.txt" --skipfoot 23 --mode 4
 
 ```
