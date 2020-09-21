@@ -38,11 +38,16 @@ if __name__=="__main__":
     ptf.append_values(param=paramtoextract, skipfoot=skipfoottodel, mode=modefolder)
     ptf.make_value_df()
     ptf.save_finaldf(FileSaveName=savename)
+    print(ptf.finaldf)
+    ptf.make_crosstab(print_tab = True)
 
+    ptf.plot_heatmap()
     # print(ptf.Value)
     # print(ptf.Folder)
     # print(ptf.Parameter)
-    print(ptf.finaldf)
+
+
+
     # parse_file = ParseFile(rootdir)
     # parse_file.desc_textfile()
     # parse_file.extract_values('QST')

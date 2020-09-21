@@ -80,3 +80,29 @@ class ParseTreeFolder(ParseFile):
         import pandas as pd
         self.finaldf.to_csv(FileSaveName,index=False, header=True)
         print('saved file {}'.format(FileSaveName))
+
+    def make_crosstab(self, choice="50%", print_tab = False):
+
+        import pandas as pd
+
+        self.finaldf['appended'] =  self.finaldf['path_' + str(self.mode-2)] + '$' + self.finaldf['path_' + str(self.mode-1)]
+        self.finaldf[['path_' + str(self.mode), choice]]
+        self.pivoteddf = self.finaldf.pivot(index = 'path_' + str(self.mode-1), columns='path_' + str(self.mode-2) , values=choice)
+        if print_tab:
+            print(self.pivoteddf )
+
+    def plot_heatmap(self):
+        import matplotlib.pyplot as plt
+        # fig, ax = plt.subplots()
+        # im = ax.imshow(harvest)
+        #
+        # # We want to show all ticks...
+        # ax.set_xticks(np.arange(len(farmers)))
+        # ax.set_yticks(np.arange(len(vegetables)))
+        # # ... and label them with the respective list entries
+        # ax.set_xticklabels(farmers)
+        # ax.set_yticklabels(vegetables)
+        #
+        # # Rotate the tick labels and set their alignment.
+        # plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+        #          rotation_mode="anchor")
