@@ -34,5 +34,6 @@ methods:
 
 ## to do
 
-- viz methods
+- save fig
+- robust heatmap
 - assertion methods
