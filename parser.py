@@ -1,11 +1,14 @@
 # "C:\\Users\\Xavier\\Thèse\\EXP 2017\\Suivi EXP\\AVRIL18\\PHEN\\inter\\Diameter GR"
 
 # python parser.py --source "C:\\Users\\Xavier\\Thèse\\EXP 2017\\Suivi EXP\\AVRIL18\\PHEN\\inter\\
+
 # python parser.py --source "bilan.txt" --setdir "C:\\Users\\Xavier\\ParseProject"
-# python parser.py --source "C:/Users/Xavier/Thèse/EXP 2017/Suivi EXP/AVRIL18/PHEN/inter/" --param "QST" --filename "bilan.txt"
-# python parser.py --source "C:/Users/Xavier/Thèse/EXP 2017/Suivi EXP/AVRIL18/PHEN/inter/" --param "QST" --filename "bilan.txt" --skipfoot 43 --mode 3
-# python parser.py --source "C:/Users/Xavier/Thèse/EXP 2017/Suivi EXP/AVRIL18/pheno_12P" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
-# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\pheno_12P" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
+
+# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
+# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
+# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
+
+
 if __name__=="__main__":
 
     #%% Dependencies
@@ -39,9 +42,10 @@ if __name__=="__main__":
     ptf.make_value_df()
     ptf.save_finaldf(FileSaveName=savename)
     print(ptf.finaldf)
-    ptf.make_crosstab(print_tab = True)
+    ptf.make_crosstab(print_tab = True, choice = '2.5%')
 
     ptf.plot_heatmap()
+
     # print(ptf.Value)
     # print(ptf.Folder)
     # print(ptf.Parameter)
