@@ -4,9 +4,9 @@
 
 # python parser.py --source "bilan.txt" --setdir "C:\\Users\\Xavier\\ParseProject"
 
+# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\pheno_12P" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
 # python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
-# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
-# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\inter" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
+# python parser.py --source "C:\Users\Xavier\Thèse\EXP 2017\Suivi EXP\AVRIL18\PHEN\intra_us" --param "QST" --filename "bilan.txt" --skipfoot 23 --mode 4
 
 
 if __name__=="__main__":

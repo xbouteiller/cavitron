@@ -1,40 +1,53 @@
 parameter,path_0,path_1,path_2,path_3,path_4,mu.vect,50%,2.5%,97.5%
-QST,PHEN,intra_us,T18,Diameter GR,bilan.txt,0.172,0.155,0.067,0.37200000000000005
-QST,PHEN,intra_us,T18,Foliar weight GR,bilan.txt,0.168,0.075,0.0,0.973
-QST,PHEN,intra_us,T18,Germination rate,bilan.txt,0.03,0.02,0.0,0.114
-QST,PHEN,intra_us,T18,Height GR 1,bilan.txt,0.026000000000000002,0.019,0.004,0.092
-QST,PHEN,intra_us,T18,Height GR 2,bilan.txt,0.18899999999999997,0.159,0.036000000000000004,0.507
-QST,PHEN,intra_us,T18,N of Leaves,bilan.txt,0.02,0.005,0.0,0.12
-QST,PHEN,intra_us,T18,PSII yield,bilan.txt,0.027000000000000003,0.019,0.004,0.095
-QST,PHEN,intra_us,T18,Stage 1,bilan.txt,0.111,0.054000000000000006,0.0,0.828
-QST,PHEN,intra_us,T18,Stage 2,bilan.txt,0.34,0.239,0.049,0.998
-QST,PHEN,intra_us,T18,Stage 3,bilan.txt,0.573,0.519,0.111,0.9990000000000001
-QST,PHEN,intra_us,T18,Stage 4,bilan.txt,0.17300000000000001,0.027000000000000003,0.0,0.9420000000000001
-QST,PHEN,intra_us,T18,Stem weight GR,bilan.txt,0.109,0.021,0.0,0.836
-QST,PHEN,intra_us,T18,Total weight GR,bilan.txt,0.177,0.059000000000000004,0.0,0.99
-QST,PHEN,intra_us,T22,Diameter GR,bilan.txt,0.170,0.151,0.057999999999999996,0.385
-QST,PHEN,intra_us,T22,Foliar weight GR,bilan.txt,0.429,0.295,0.0,0.997
-QST,PHEN,intra_us,T22,Germination rate,bilan.txt,0.08900000000000001,0.071,0.011000000000000001,0.27
-QST,PHEN,intra_us,T22,Height GR 1,bilan.txt,0.21,0.16699999999999998,0.025,0.608
-QST,PHEN,intra_us,T22,Height GR 2,bilan.txt,0.25,0.21100000000000002,0.049,0.675
-QST,PHEN,intra_us,T22,N of Leaves,bilan.txt,0.015,0.002,0.0,0.09300000000000001
-QST,PHEN,intra_us,T22,PSII yield,bilan.txt,0.182,0.14800000000000002,0.031,0.501
-QST,PHEN,intra_us,T22,Stage 1,bilan.txt,0.48,0.369,0.017,0.998
-QST,PHEN,intra_us,T22,Stage 2,bilan.txt,0.047,0.033,0.0,0.183
-QST,PHEN,intra_us,T22,Stage 3,bilan.txt,0.037000000000000005,0.025,0.0,0.153
-QST,PHEN,intra_us,T22,Stage 4,bilan.txt,0.061,0.038,0.0,0.25
-QST,PHEN,intra_us,T22,Stem weight GR,bilan.txt,0.527,0.569,0.002,0.9940000000000001
-QST,PHEN,intra_us,T22,Total weight GR,bilan.txt,0.485,0.456,0.0,0.998
-QST,PHEN,intra_us,T31,Diameter GR,bilan.txt,0.142,0.125,0.05,0.33
-QST,PHEN,intra_us,T31,Foliar weight GR,bilan.txt,0.462,0.39,0.0,0.998
-QST,PHEN,intra_us,T31,Germination rate,bilan.txt,0.129,0.102,0.021,0.39899999999999997
-QST,PHEN,intra_us,T31,Height GR 1,bilan.txt,0.028999999999999998,0.015,0.002,0.145
-QST,PHEN,intra_us,T31,Height GR 2,bilan.txt,0.146,0.085,0.006999999999999999,0.618
-QST,PHEN,intra_us,T31,N of Leaves,bilan.txt,0.14,0.008,0.0,0.9590000000000001
-QST,PHEN,intra_us,T31,PSII yield,bilan.txt,0.032,0.024,0.006,0.10400000000000001
-QST,PHEN,intra_us,T31,Stage 1,bilan.txt,0.094,0.04,0.0,0.764
-QST,PHEN,intra_us,T31,Stage 2,bilan.txt,0.237,0.09,0.0,0.988
-QST,PHEN,intra_us,T31,Stage 3,bilan.txt,0.027000000000000003,0.011000000000000001,0.0,0.14
-QST,PHEN,intra_us,T31,Stage 4,bilan.txt,0.03,0.005,0.0,0.195
-QST,PHEN,intra_us,T31,Stem weight GR,bilan.txt,0.214,0.042,0.0,0.97
-QST,PHEN,intra_us,T31,Total weight GR,bilan.txt,0.414,0.261,0.0,0.9990000000000001
+QST,AVRIL18,pheno_12P,inter,Diameter GR,bilan.txt,0.258,0.24100000000000002,0.114,0.501
+QST,AVRIL18,pheno_12P,inter,Foliar weight GR,bilan.txt,0.07400000000000001,0.033,0.0,0.39399999999999996
+QST,AVRIL18,pheno_12P,inter,Germination rate,bilan.txt,0.08800000000000001,0.078,0.023,0.214
+QST,AVRIL18,pheno_12P,inter,Height GR 1,bilan.txt,0.053,0.040999999999999995,0.009000000000000001,0.163
+QST,AVRIL18,pheno_12P,inter,Height GR 2,bilan.txt,0.118,0.09300000000000001,0.017,0.358
+QST,AVRIL18,pheno_12P,inter,N of Leaves,bilan.txt,0.24,0.065,0.0,0.971
+QST,AVRIL18,pheno_12P,inter,PSII yield,bilan.txt,0.068,0.055,0.017,0.201
+QST,AVRIL18,pheno_12P,inter,Stage 1,bilan.txt,0.08900000000000001,0.069,0.0,0.313
+QST,AVRIL18,pheno_12P,inter,Stage 2,bilan.txt,0.055999999999999994,0.044000000000000004,0.0,0.183
+QST,AVRIL18,pheno_12P,inter,Stage 3,bilan.txt,0.028999999999999998,0.019,0.0,0.11599999999999999
+QST,AVRIL18,pheno_12P,inter,Stage 4,bilan.txt,0.032,0.019,0.0,0.141
+QST,AVRIL18,pheno_12P,inter,Stem weight GR,bilan.txt,0.071,0.039,0.0,0.33
+QST,AVRIL18,pheno_12P,inter,Total weight GR,bilan.txt,0.08199999999999999,0.04,0.0,0.45299999999999996
+QST,pheno_12P,intra,T18,Diameter GR,bilan.txt,0.184,0.16699999999999998,0.071,0.39399999999999996
+QST,pheno_12P,intra,T18,Foliar weight GR,bilan.txt,0.27399999999999997,0.11900000000000001,0.0,0.983
+QST,pheno_12P,intra,T18,Germination rate,bilan.txt,0.147,0.128,0.04,0.359
+QST,pheno_12P,intra,T18,Height GR 1,bilan.txt,0.038,0.028999999999999998,0.006999999999999999,0.11900000000000001
+QST,pheno_12P,intra,T18,Height GR 2,bilan.txt,0.142,0.114,0.025,0.425
+QST,pheno_12P,intra,T18,N of Leaves,bilan.txt,0.04,0.004,0.0,0.467
+QST,pheno_12P,intra,T18,PSII yield,bilan.txt,0.025,0.018000000000000002,0.005,0.084
+QST,pheno_12P,intra,T18,Stage 1,bilan.txt,0.184,0.141,0.039,0.667
+QST,pheno_12P,intra,T18,Stage 2,bilan.txt,0.102,0.08199999999999999,0.013999999999999999,0.306
+QST,pheno_12P,intra,T18,Stage 3,bilan.txt,0.017,0.005,0.0,0.09699999999999999
+QST,pheno_12P,intra,T18,Stage 4,bilan.txt,0.222,0.054000000000000006,0.0,0.9690000000000001
+QST,pheno_12P,intra,T18,Stem weight GR,bilan.txt,0.129,0.033,0.001,0.774
+QST,pheno_12P,intra,T18,Total weight GR,bilan.txt,0.266,0.077,0.0,0.982
+QST,pheno_12P,intra,T22,Diameter GR,bilan.txt,0.149,0.133,0.054000000000000006,0.335
+QST,pheno_12P,intra,T22,Foliar weight GR,bilan.txt,0.273,0.078,0.0,0.993
+QST,pheno_12P,intra,T22,Germination rate,bilan.txt,0.129,0.114,0.035,0.315
+QST,pheno_12P,intra,T22,Height GR 1,bilan.txt,0.08,0.06,0.012,0.26899999999999996
+QST,pheno_12P,intra,T22,Height GR 2,bilan.txt,0.061,0.046,0.01,0.19899999999999998
+QST,pheno_12P,intra,T22,N of Leaves,bilan.txt,0.005,0.001,0.0,0.039
+QST,pheno_12P,intra,T22,PSII yield,bilan.txt,0.051,0.039,0.009000000000000001,0.155
+QST,pheno_12P,intra,T22,Stage 1,bilan.txt,0.013999999999999999,0.003,0.0,0.085
+QST,pheno_12P,intra,T22,Stage 2,bilan.txt,0.015,0.004,0.0,0.08800000000000001
+QST,pheno_12P,intra,T22,Stage 3,bilan.txt,0.113,0.008,0.0,0.946
+QST,pheno_12P,intra,T22,Stage 4,bilan.txt,0.102,0.08,0.009000000000000001,0.321
+QST,pheno_12P,intra,T22,Stem weight GR,bilan.txt,0.505,0.509,0.002,0.991
+QST,pheno_12P,intra,T22,Total weight GR,bilan.txt,0.446,0.318,0.0,0.998
+QST,pheno_12P,intra,T31,Diameter GR,bilan.txt,0.178,0.161,0.067,0.38799999999999996
+QST,pheno_12P,intra,T31,Foliar weight GR,bilan.txt,0.7759999999999999,0.92,0.109,0.9990000000000001
+QST,pheno_12P,intra,T31,Germination rate,bilan.txt,0.127,0.109,0.032,0.319
+QST,pheno_12P,intra,T31,Height GR 1,bilan.txt,0.046,0.035,0.005,0.154
+QST,pheno_12P,intra,T31,Height GR 2,bilan.txt,0.305,0.252,0.037000000000000005,0.794
+QST,pheno_12P,intra,T31,N of Leaves,bilan.txt,0.14,0.045,0.0,0.983
+QST,pheno_12P,intra,T31,PSII yield,bilan.txt,0.023,0.018000000000000002,0.005,0.073
+QST,pheno_12P,intra,T31,Stage 1,bilan.txt,0.124,0.086,0.006999999999999999,0.509
+QST,pheno_12P,intra,T31,Stage 2,bilan.txt,0.312,0.171,0.013000000000000001,0.985
+QST,pheno_12P,intra,T31,Stage 3,bilan.txt,0.126,0.017,0.0,0.895
+QST,pheno_12P,intra,T31,Stage 4,bilan.txt,0.023,0.004,0.0,0.14300000000000002
+QST,pheno_12P,intra,T31,Stem weight GR,bilan.txt,0.565,0.634,0.004,0.995
+QST,pheno_12P,intra,T31,Total weight GR,bilan.txt,0.78,0.941,0.081,1.0
