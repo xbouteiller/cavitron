@@ -14,33 +14,71 @@ class ParseFile():
 
         import pandas as pd
         import numpy as np
-        self.textfile = pd.read_table(path, skiprows=3,  skipfooter=skipfoot, engine = 'python', delimiter='\s+')
+        self.file = pd.read_csv(path, skiprows=1, sep = ",")
 
-    def desc_textfile(self):
+    def desc_file(self):
         '''
         method for printing information of the file
         '''
-        print(self.textfile.head())
+        print(self.file.head())
         print("\n")
-        print(self.textfile.tail())
+        print(self.file.tail())
         print("\n")
-        print("\ndim of text file is :\n -nrow: {}\n -ncol: {}".format(self.textfile.shape[0],self.textfile.shape[1]))
+        print("\ndim of text file is :\n -nrow: {}\n -ncol: {}".format(self.file.shape[0],self.file.shape[1]))
+        print("\n")
+        # print(self.file.dtypes)
 
-    def extract_values(self, param):
+    def clean_file(self):
         '''
-        extract the values from the parsed file
-        portability : allow manual selection of the columns
+        clean the file
         '''
-        self.param = param
-        self.val = self.textfile.loc[self.textfile.index == param, ['mu.vect', '50%', '2.5%','97.5%']]
-        return self.val
+        import re
+        import pandas as pd
+        import numpy as np
 
-    def print_extractedvalues(self):
+        #drop full na
+        self.file = self.file.dropna(axis = 0, how = 'all')
+        self.file = self.file.dropna(axis = 1, how = 'all')
+
+        # remove ;
+        # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
+
+        # convert to numeric if possible
+        self.file = self.file.apply(lambda x: pd.to_numeric(x, errors ="ignore"))
+
+        # lower strings
+        self.file = self.file.applymap(lambda s:s.lower() if isinstance(s, str) else s)
+
+
+    def _check_num(self, col):
+        import pandas as pd
+        check_num = self.file[col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
+        self.check_num = check_num
+        if all(check_num):
+            print('columns {} are numeric'.format(col))
+        else:
+            print('at least one value is not numeric')
+
+    def _check_group(self, col):
+
+        check_group = [len(self.file[c].unique())==1 for c in col]
+        self.check_group = check_group
+        if all(check_group):
+            print('group are ok'.format(col))
+        else:
+            print('at least one group is not ok')
+
+
+    def assess_file(self, num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa'],
+                          group_col=['Sampling_location', 'Treatment', 'Operator']):
         '''
         print the values extracted from the file
         '''
-        print('\nparam is:\n{}'.format(self.param))
-        print('\nextracted values are:\n{}'.format(self.val))
+        self._check_num(col = num_col)
+        self._check_group(col = group_col)
+
+
+
 
 
 class ParseTreeFolder(ParseFile):
