@@ -1,3 +1,6 @@
+num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
+group_col=['Sampling_location', 'Treatment', 'Operator']
+
 class ParseFile():
     import pandas as pd
     import numpy as np
@@ -49,53 +52,68 @@ class ParseFile():
         # lower strings
         self.file = self.file.applymap(lambda s:s.lower() if isinstance(s, str) else s)
 
+        return self.file
 
-    def _check_num(self, col):
-        import pandas as pd
-        check_num = self.file[col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
-        self.check_num = check_num
-        if all(check_num):
-            print('columns {} are numeric'.format(col))
-        else:
-            print('at least one value is not numeric')
-
-    def _check_group(self, col):
-
-        check_group = [len(self.file[c].unique())==1 for c in col]
-        self.check_group = check_group
-        if all(check_group):
-            print('group are ok'.format(col))
-        else:
-            print('at least one group is not ok')
-
-
-    def assess_file(self, num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa'],
-                          group_col=['Sampling_location', 'Treatment', 'Operator']):
-        '''
-        print the values extracted from the file
-        '''
-        self._check_num(col = num_col)
-        self._check_group(col = group_col)
-
-
+    # def _check_num(self, col):
+    #     import pandas as pd
+    #     check_num = self.file[col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
+    #     self.check_num = check_num
+    #     if all(check_num):
+    #         print('columns {} are numeric'.format(col))
+    #     else:
+    #         print('at least one value is not numeric')
+    #
+    # def _check_group(self, col):
+    #
+    #     check_group = [len(self.file[c].unique())==1 for c in col]
+    #     self.check_group = check_group
+    #     if all(check_group):
+    #         print('group are ok'.format(col))
+    #     else:
+    #         print('at least one group is not ok')
+    #
+    #
+    # def assess_file(self, num_col = num_col, group_col= group_col):
+    #     '''
+    #     print the values extracted from the file
+    #     '''
+    #     self._check_num(col = num_col)
+    #     self._check_group(col = group_col)
 
 
 
-class ParseTreeFolder(ParseFile):
 
-    def __init__(self):
-        super()
 
-    def parse_folder(self, path_folder, targetfilename):
+class ParseTreeFolder():
+
+    def __init__(self, path):
+        # super().__init__()
+        self.path = path
+
+        self.choices = {
+        "1": self.do_nothing,
+        "2": self.modify,
+        "3": self.extract_strings,
+        "4": self.erase
+        }
+
+    def _listdir_fullpath(self, p, s):
+        import os
+        import re
+        d=os.path.join(p, s)
+        return [os.path.join(d, f) for f in os.listdir(d) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
+
+    def parse_folder(self):
         '''
         parse the folder tree and store the full path to target file in a list
         '''
         import os
-        listOfFiles = list()
-        for (dirpath, dirnames, filenames) in os.walk(path_folder):
-            listOfFiles += [os.path.join(dirpath, file) for file in filenames if file.lower() == targetfilename]
-        self.listOfFiles = listOfFiles
+        self.listOfFiles = []
+        for pa, subdirs, files in os.walk(self.path):
+            for s in subdirs:
+                self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
 
+        return self.listOfFiles
 
     def print_listofiles(self):
         '''
@@ -105,109 +123,157 @@ class ParseTreeFolder(ParseFile):
         for elem in self.listOfFiles:
             print(elem)
 
-    def instantiate_list(self):
-        '''
-        instantiate empty list for appending and storing extracted value
-        '''
 
-        self.Parameter = []
-        self.Folder = []
-        self.Value = []
-        print("Parameter, Folder, Value lists instantiated")
+    def _check_num(self, _df, _col):
+        import pandas as pd
+        check_num = _df[_col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
 
-    def append_values(self, param, skipfoot=43, mode = 3):
+        if all(check_num):
+            print('columns {} are numeric'.format(_col))
+        else:
+            print('at least one value is not numeric')
+
+        return [all(check_num), check_num]
+
+
+    def _check_group(self, _df, _col):
+
+        check_group = [len(_df[c].unique())==1 for c in _col]
+
+        if all(check_group):
+            print('group are ok'.format(_col))
+        else:
+            print('at least one group is not ok')
+
+        return [all(check_group), check_group]
+
+    def _get_valid_input(self, input_string, valid_options):
+        input_string += "({}) ".format("\n,\n ".join(valid_options))
+        response = input(input_string)
+        while response.lower() not in valid_options:
+            response = input(input_string)
+        return response
+
+    def display_menu(self):
+        print("""
+        List of actions
+
+        1. do nothing
+        2. modify
+        3. extract strings
+        4. erase rows
+        """)
+
+    def run(self):
+        '''Display the menu and respond to choices.'''
+
+        self.display_menu()
+        choice = input("Enter an option: ")
+        action = self.choices.get(choice)
+        if action:
+            action()
+        else:
+            print("{0} is not a valid choice".format(choice))
+            self.run()
+
+    def do_nothing(self):
+        print('chose to do nothing')
+        pass
+    def modify(self):
+        import numpy as np
+        import pandas as pd
+        print('choose to do modify')
+        nval = int(input('how many values do you want to modify ?'))
+        for i in np.arange(0,nval):
+            tobemodified = input('Which value do you want to change ?')
+            newvalue = input('What is the new value ?')
+            self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
+            print('new values are {}'.format(self.frame[self.i].unique()))
+            input('press any key to continue')
+
+    def extract_strings(self):
+        print('choose to extract strings')
+        import re
+        import numpy as np
+        print(self.frame[self.i])
+        reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]]
+        self.frame[self.i]=reg
+        print('modified to {}'.format(np.unique(np.array(reg))))
+        input('press any key to continue')
+
+    def erase(self):
+        import numpy as np
+        import pandas as pd
+        print('choose to do erase rows')
+        nval = int(input('how many values do you want to erase ?'))
+        for i in np.arange(0,nval):
+            tobemodified = input('Which row value do you want to erase ?')
+            self.frame=self.frame[self.frame[self.i]!=tobemodified]
+            print('new values are {}'.format(self.frame[self.i].unique()))
+            input('press any key to continue')
+
+    def append_values(self):
         '''
         method for filling the lists
-
-        fill 3 lists with the values extracted from each file
-
-        1 with the paramater extracted
-        1 with the path splitted in several columns
-        1 with extracted values
-
-        attributes
-        self.Parameter
-        self.Folder
-        self.Value
         '''
+
         import numpy as np
-        self.mode = mode
-        for elem in self.listOfFiles:
-            pf = ParseFile(elem, skipfoot=skipfoot)
-            val = pf.extract_values(param=param)
-
-            par_list = [pf.param]
-            par_fold = elem.split('\\')[(-mode-1):] # replace / by \\
-            par_val = val.values.tolist()[0]
-
-            self.Parameter.append(par_list)
-            self.Folder.append(par_fold)
-            self.Value.append(par_val)
-
-    def make_value_df(self):
-        '''
-        concat the 3 lists into the same data frame
-
-        attributes:
-        self.finaldf
-        '''
         import pandas as pd
-        import numpy as np
 
-        Parameterdf=pd.DataFrame(self.Parameter)
-        Valuedf=pd.DataFrame(self.Value)
-        Folderdf=pd.DataFrame(self.Folder)
+        dimfolder = len(self.listOfFiles)
 
-        self.finaldf = pd.concat([Parameterdf, Folderdf, Valuedf], axis=1)
-        colname = ['parameter'] +['path_'+str(i) for i in range(0,self.mode+1)]+ ['mu.vect', '50%', '2.5%','97.5%' ]
-        self.finaldf.columns = colname
 
-    def save_finaldf(self, FileSaveName):
+        li_all = []
+        for d in np.arange(0,dimfolder):
+            print('------------------------------------------')
+            print(d)
+            li = []
+            for elem in self.listOfFiles[d]:
+                print(elem)
+                df = ParseFile(path = elem).clean_file()
+                print(df)
+                li.append(df)
+
+            self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
+            print('shape of frame is {}'.format(self.frame.shape))
+
+            all_cn = self._check_num(_df = self.frame , _col= num_col)[0]
+            cn = self._check_num(_df = self.frame , _col= num_col)[1]
+
+            if not all_cn:
+                print('\n -----------------------')
+                [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
+                input('-NUM ALERT- press any key to continue')
+
+            all_cg = self._check_group(_df = self.frame , _col = group_col)[0]
+            cg = self._check_group(_df = self.frame , _col = group_col)[1]
+            if not all_cg:
+                print('\n -----------------------')
+                [print('label of col {} is unique'.format(i)) if j else print('label of col {} is NOT unique'.format(i)) for i, j in zip(group_col, cg)]
+                # [i if j else print('labels of col {} are {}'.format(i, frame[i].unique())) for i, j in zip(group_col, cg)]
+
+                for i, j in zip(group_col, cg):
+                    if not j:
+                        self.i=i
+                        print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
+                        self.run()
+
+
+            li_all.append(self.frame)
+
+            #check integrity
+
+        self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
+        print('shape of final frame is {}'.format(self.final_frame.shape))
+
+        return self.final_frame
+
+
+
+    def save_finaldf(self, FileSaveName='Formanrisk.csv'):
         '''
         saved the concatened df into a csv file
         '''
         import pandas as pd
-        self.finaldf.to_csv(FileSaveName,index=False, header=True)
+        self.final_frame.to_csv(FileSaveName,index=False, header=True)
         print('saved file {}'.format(FileSaveName))
-
-    def make_crosstab(self, choice="50%", print_tab = False):
-        '''
-        make a crosstab
-        '''
-
-        import pandas as pd
-
-        self.finaldf['appended'] =  self.finaldf['path_' + str(self.mode-2)] + '$' + self.finaldf['path_' + str(self.mode-1)]
-        self.finaldf[['path_' + str(self.mode), choice]]
-        self.pivoteddf = self.finaldf.pivot(index = 'path_' + str(self.mode-1), columns='path_' + str(self.mode-2) , values=choice)
-        if print_tab:
-            print(self.pivoteddf )
-
-    def plot_heatmap(self):
-        '''
-        print heatmap
-        '''
-        import matplotlib.pyplot as plt
-        import numpy as np
-
-        fig, ax = plt.subplots()
-        im = ax.imshow(self.pivoteddf)
-
-        # We want to show all ticks...
-        ax.set_yticks(np.arange(self.pivoteddf.shape[0]))
-        ax.set_xticks(np.arange(self.pivoteddf.shape[1]))
-        # ... and label them with the respective list entries
-        ax.set_yticklabels(self.pivoteddf.index)
-        ax.set_xticklabels(self.pivoteddf.columns)
-
-        # Rotate the tick labels and set their alignment.
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-                 rotation_mode="anchor")
-
-         # Loop over data dimensions and create text annotations.
-        for i in range(self.pivoteddf.shape[0]):
-            for j in range(self.pivoteddf.shape[1]):
-                text = ax.text(j, i, np.round(self.pivoteddf.iloc[i, j]*100,2),
-                               ha="center", va="center", color="w")
-
-        plt.show()
