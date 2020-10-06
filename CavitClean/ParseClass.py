@@ -42,7 +42,7 @@ class ParseFile():
         #drop full na
         self.file = self.file.dropna(axis = 0, how = 'all')
         self.file = self.file.dropna(axis = 1, how = 'all')
-
+        self.file = self.file.fillna('None')
         # remove ;
         # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
 
@@ -50,7 +50,7 @@ class ParseFile():
         self.file = self.file.apply(lambda x: pd.to_numeric(x, errors ="ignore"))
 
         # lower strings
-        self.file = self.file.applymap(lambda s:s.lower() if isinstance(s, str) else s)
+        self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
 
         return self.file
 
@@ -195,11 +195,17 @@ class ParseTreeFolder():
         print('choose to extract strings')
         import re
         import numpy as np
-        print(self.frame[self.i])
-        reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]]
-        self.frame[self.i]=reg
+        # print(self.frame[self.i])
+        # self.frame[self.i] =  self.frame[self.i]
+        reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]] #if f!='None' else f[0]
+        self.frame[self.i]=np.array(reg)
         print('modified to {}'.format(np.unique(np.array(reg))))
-        input('press any key to continue')
+        inp=input('press any key to continue --- or enter 1 to modify values ---')
+        if inp == str(1):
+            self.modify()
+        else:
+            print('no values to be modified')
+
 
     def erase(self):
         import numpy as np

@@ -1,0 +1,9 @@
+README.md
+setup.py
+CavitClean/ParseClass.py
+CavitClean/__init__.py
+CavitClean.egg-info/PKG-INFO
+CavitClean.egg-info/SOURCES.txt
+CavitClean.egg-info/dependency_links.txt
+CavitClean.egg-info/requires.txt
+CavitClean.egg-info/top_level.txt

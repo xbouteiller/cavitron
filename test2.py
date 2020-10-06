@@ -3,7 +3,7 @@ if __name__=="__main__":
     #%% Dependencies
     import os
 
-    from ParseProject.ParseClass import ParseFile, ParseTreeFolder
+    from CavitClean.ParseClass import ParseFile, ParseTreeFolder
 
     root = "F:\\FORMANRISK"
 
