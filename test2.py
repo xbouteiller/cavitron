@@ -5,7 +5,7 @@ if __name__=="__main__":
 
     from CavitClean.ParseClass import ParseFile, ParseTreeFolder
 
-    root = "F:\\FORMANRISK"
+    root = "C:\\Users\\Xavier\\Thèse\\Nouveau dossier"
 
     parse_folder = ParseTreeFolder(path = root)
     parse_folder.parse_folder()

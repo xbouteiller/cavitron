@@ -1,5 +1,6 @@
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
+# python setup.py develop
 
 class ParseFile():
     import pandas as pd
@@ -42,7 +43,7 @@ class ParseFile():
         #drop full na
         self.file = self.file.dropna(axis = 0, how = 'all')
         self.file = self.file.dropna(axis = 1, how = 'all')
-        self.file = self.file.fillna('None')
+        # self.file = self.file.fillna('None') ###################
         # remove ;
         # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
 
@@ -51,6 +52,7 @@ class ParseFile():
 
         # lower strings
         self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
+        # self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
 
         return self.file
 
@@ -197,9 +199,21 @@ class ParseTreeFolder():
         import numpy as np
         # print(self.frame[self.i])
         # self.frame[self.i] =  self.frame[self.i]
-        reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]] #if f!='None' else f[0]
-        self.frame[self.i]=np.array(reg)
-        print('modified to {}'.format(np.unique(np.array(reg))))
+        # reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]] #if f!='None' else f[0]
+        # reg=[]
+        print('col',self.frame[self.i])
+        # for f in self.frame[self.i].values:
+        #     print('f',f)
+        #     if f==np.nan:
+        #         reg.append(np.nan)
+        #     else:
+        #         reg.append(re.findall(r'[a-zA-Z]+', f))
+
+        self.frame[self.i]=self.frame[self.i].str.extract('([a-zA-Z]+)', expand = False)
+
+        # self.frame[self.i]=np.array(reg)
+        # print('modified to {}'.format(np.unique(np.array(reg))))
+        print('modified to {}'.format(self.frame[self.i].unique()))
         inp=input('press any key to continue --- or enter 1 to modify values ---')
         if inp == str(1):
             self.modify()
@@ -237,7 +251,7 @@ class ParseTreeFolder():
             for elem in self.listOfFiles[d]:
                 print(elem)
                 df = ParseFile(path = elem).clean_file()
-                print(df)
+                # print(df)
                 li.append(df)
 
             self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
