@@ -10,7 +10,7 @@ if __name__=="__main__":
 
     parse_folder = ParseTreeFolder(path = root)
     parse_folder.parse_folder()
-    parse_folder.print_listofiles()
+    # parse_folder.print_listofiles()
     parse_folder.append_values()
     parse_folder.save_finaldf(FileSaveName='Formanrisk.csv')
 

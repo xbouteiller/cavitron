@@ -1,10 +1,11 @@
+import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------             CavitClean             ---------------------')
-print('---------------                 V0.3               ---------------------')
+print('---------------                 V1.0               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
-
+time.sleep(2)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
@@ -242,12 +243,14 @@ class ParseTreeFolder():
         import re
         import numpy as np
         print('col',self.frame[self.i])
-        reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)[0]
+        reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
+        print(reg)
         self.frame[self.i]=reg[0]
-        self.frame['SAMPLE_REF2']=reg[1]
-        print('modified to {}'.format(self.frame['SAMPLE_REF2'].unique()))
-        print('modified "SAMPLE_REF2" to {}'.format(self.frame[self.i].unique()))
-        inp=input('press any key to continue --- or enter 1 to modify values ---')
+        self.frame['SAMPLE_REF2']=reg[1].astype('int')
+        print('modified {} to {}'.format(self.i, self.frame[self.i].unique()))
+        print('modified "SAMPLE_REF2" to {}'.format(self.frame['SAMPLE_REF2'].unique()))
+
+        inp=input('press any key to continue --- or enter 1 to modify {} values ---'.format(self.i))
         if inp == str(1):
             self.modify()
         else:
