@@ -185,7 +185,14 @@ class ParseTreeFolder():
         import numpy as np
         import pandas as pd
         print('choose to do modify')
-        nval = int(input('how many values do you want to modify ?'))
+
+        while True:
+            try:
+                nval = int(input('how many values do you want to modify ?'))
+                break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
+
         for i in np.arange(0,nval):
             tobemodified = input('Which value do you want to change ?')
             newvalue = input('What is the new value ?')
