@@ -246,9 +246,9 @@ class ParseTreeFolder():
         reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
         print(reg)
         self.frame[self.i]=reg[0]
-        self.frame['SAMPLE_REF2']=reg[1]#.astype('int')
+        self.frame['Sample_ref_2']=reg[1]#.astype('int')
         print('modified {} to {}'.format(self.i, self.frame[self.i].unique()))
-        print('modified "SAMPLE_REF2" to {}'.format(self.frame['SAMPLE_REF2'].unique()))
+        print('modified "Sample_ref_2" to {}'.format(self.frame['Sample_ref_2'].unique()))
 
         inp=input('press any key to continue --- or enter 1 to modify {} values ---'.format(self.i))
         if inp == str(1):
