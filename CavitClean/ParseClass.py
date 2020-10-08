@@ -1,3 +1,11 @@
+print('------------------------------------------------------------------------')
+print('---------------                                    ---------------------')
+print('---------------             CavitClean             ---------------------')
+print('---------------                 V0.3               ---------------------')
+print('----------------                                   ---------------------')
+print('------------------------------------------------------------------------')
+
+
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
 # python setup.py develop
@@ -96,7 +104,8 @@ class ParseTreeFolder():
         "1": self.do_nothing,
         "2": self.modify,
         "3": self.extract_strings,
-        "4": self.erase
+        "4": self.erase,
+        "5": self.extract_strings_and_nums
         }
 
     def _listdir_fullpath(self, p, s):
@@ -164,6 +173,7 @@ class ParseTreeFolder():
         2. modify
         3. extract strings
         4. erase rows
+        5. extract strings and numbers
         """)
 
     def run(self):
@@ -227,6 +237,21 @@ class ParseTreeFolder():
         else:
             print('no values to be modified')
 
+    def extract_strings_and_nums(self):
+        print('choose to extract strings and numbers')
+        import re
+        import numpy as np
+        print('col',self.frame[self.i])
+        reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)[0]
+        self.frame[self.i]=reg[0]
+        self.frame['SAMPLE_REF2']=reg[1]
+        print('modified to {}'.format(self.frame['SAMPLE_REF2'].unique()))
+        print('modified "SAMPLE_REF2" to {}'.format(self.frame[self.i].unique()))
+        inp=input('press any key to continue --- or enter 1 to modify values ---')
+        if inp == str(1):
+            self.modify()
+        else:
+            print('no values to be modified')
 
     def erase(self):
         import numpy as np
