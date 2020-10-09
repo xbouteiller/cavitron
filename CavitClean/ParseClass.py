@@ -177,7 +177,7 @@ class ParseTreeFolder():
 
 
     def _get_valid_input(self, input_string, valid_options):
-        input_string += "({}) ".format("\n,\n ".join(valid_options))
+        input_string += "({}) ".format(", ".join(valid_options))
         response = input(input_string)
         while response.lower() not in valid_options:
             response = input(input_string)
@@ -300,8 +300,9 @@ class ParseTreeFolder():
             print('------------------------------------------')
             print(d)
             li = []
+            print('parsing list of files from : {}'.format(self.listOfFiles[d]))
             for elem in self.listOfFiles[d]:
-                print(elem)
+                # print(elem)
                 df = ParseFile(path = elem).clean_file()
                 # print(df)
                 li.append(df)
@@ -335,12 +336,13 @@ class ParseTreeFolder():
             if any_empty:
                 print('{} contains empty values'.format(empty_col))
                 print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
-                wtd = self._get_valid_input('What do you want to do ?', ('nothing', 'replace'))
+                wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing', 'replace'))
                 if wtd == 'nothing':
                     pass
                 else:
                     self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
                     print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                    input('-EMPTY ALERT- press any key to continue')
 
             li_all.append(self.frame)
 
