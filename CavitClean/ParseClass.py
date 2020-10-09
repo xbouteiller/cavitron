@@ -170,7 +170,7 @@ class ParseTreeFolder():
         if any(check_empty):
             print('one value of {} is empty'.format(_col))
         else:
-            print('contains no empty value').format(_col))
+            print('contains no empty value'.format(_col))
 
         return [any(check_empty), check_empty]
 
