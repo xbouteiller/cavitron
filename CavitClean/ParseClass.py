@@ -2,13 +2,15 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------             CavitClean             ---------------------')
-print('---------------                 V1.0               ---------------------')
+print('---------------                 V2.0               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
+empty_col=['Sample_ref_2']
+
 # python setup.py develop
 
 class ParseFile():
@@ -159,6 +161,21 @@ class ParseTreeFolder():
 
         return [all(check_group), check_group]
 
+
+    def _check_empty(self, _df, _col):
+
+        import pandas as pd
+        check_empty = self.frame[self.i].isna()
+
+        if any(check_empty):
+            print('one value of {} is empty'.format(_col))
+        else:
+            print('contains no empty value').format(_col))
+
+        return [any(check_empty), check_empty]
+
+
+
     def _get_valid_input(self, input_string, valid_options):
         input_string += "({}) ".format("\n,\n ".join(valid_options))
         response = input(input_string)
@@ -246,9 +263,9 @@ class ParseTreeFolder():
         reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
         print(reg)
         self.frame[self.i]=reg[0]
-        self.frame['SAMPLE_REF2']=reg[1]#.astype('int')
+        self.frame['Sample_ref_2']=reg[1]#.astype('int')
         print('modified {} to {}'.format(self.i, self.frame[self.i].unique()))
-        print('modified "SAMPLE_REF2" to {}'.format(self.frame['SAMPLE_REF2'].unique()))
+        print('modified "Sample_ref_2" to {}'.format(self.frame['Sample_ref_2'].unique()))
 
         inp=input('press any key to continue --- or enter 1 to modify {} values ---'.format(self.i))
         if inp == str(1):
@@ -313,6 +330,17 @@ class ParseTreeFolder():
                         print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
                         self.run()
 
+            any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+            empty = self._check_empty(_df = self.frame , _col= empty_col)[1]
+            if any_empty:
+                print('{} contains empty values'.format(empty_col))
+                print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
+                wtd = _get_valid_input(self, 'What do you want to do ?', ('nothing', 'replace'))
+                if wtd == 'nothing':
+                    pass
+                else:
+                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
+                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
 
             li_all.append(self.frame)
 
@@ -325,10 +353,12 @@ class ParseTreeFolder():
 
 
 
-    def save_finaldf(self, FileSaveName='Formanrisk.csv'):
+    def save_finaldf(self):
         '''
         saved the concatened df into a csv file
         '''
         import pandas as pd
+        FileSaveName = input('enter final file name:') or 'DefaultTable'
+        FileSaveName += '.csv'
         self.final_frame.to_csv(FileSaveName,index=False, header=True)
         print('saved file {}'.format(FileSaveName))
