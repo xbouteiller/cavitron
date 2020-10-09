@@ -344,15 +344,15 @@ class ParseTreeFolder():
                     print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                     input('press any key to continue')
                     any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-                        if any_empty:
-                            print('still empty values in {}'.format(empty_col))
-                            wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing', 'compute'))
-                            if wtd == 'nothing':
-                                pass
-                            else:
-                                self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
-                                print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                                input('press any key to continue')
+                    if any_empty:
+                        print('still empty values in {}'.format(empty_col))
+                        wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing', 'compute'))
+                        if wtd == 'nothing':
+                            pass
+                        else:
+                            self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
+                            print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                            input('press any key to continue')
 
 
 
