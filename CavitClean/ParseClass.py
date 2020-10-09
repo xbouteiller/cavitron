@@ -53,7 +53,7 @@ class ParseFile():
 
         #drop full na
         self.file = self.file.dropna(axis = 0, how = 'all')
-        self.file = self.file.dropna(axis = 1, how = 'all')
+        # self.file = self.file.dropna(axis = 1, how = 'all')
         # self.file = self.file.fillna('None') ###################
         # remove ;
         # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
@@ -165,7 +165,7 @@ class ParseTreeFolder():
     def _check_empty(self, _df, _col):
 
         import pandas as pd
-        check_empty = self.frame[self.i].isna()
+        check_empty = self.frame[_col].isna()
 
         if any(check_empty):
             print('one value of {} is empty'.format(_col))
