@@ -137,13 +137,13 @@ class ParseTreeFolder():
         for elem in self.listOfFiles:
             print(elem)
 
-    def _nice_wrapper(self, fun):
-        def wrapper():
-            print('\n---------------------------------')
-            func()
-            print('---------------------------------\n')
-
-        return wrapper
+    # def _nice_wrapper(self, fun):
+    #     def wrapper():
+    #         print('\n---------------------------------')
+    #         func()
+    #         print('---------------------------------\n')
+    #
+    #     return wrapper
 
     def _check_num(self, _df, _col):
         import pandas as pd
@@ -214,7 +214,7 @@ class ParseTreeFolder():
             self.run()
 
     def do_nothing(self):
-        print('chose to do nothing')
+        print('chose to do nothing\n')
         pass
     def modify(self):
         import numpy as np
@@ -330,8 +330,10 @@ class ParseTreeFolder():
             any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
             empty = self._check_empty(_df = self.frame , _col= empty_col)[1]
             if any_empty:
+                print('\n -----------------------')
                 print('{} contains empty values'.format(empty_col))
                 print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
+                print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nextract: extract numbers from Comment\nmanual: enter values manually\n')
                 wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'extract', 'manual'))
                 if wtd == 'nothing':
                     pass
@@ -342,8 +344,17 @@ class ParseTreeFolder():
 
                 if wtd == 'manual':
                     for man in self.frame['Sample_ref_1'].unique():
-                        newvalue=input('What is the identifiant for "ref number 2" for individual {}'.format(man))
-                        self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
+                        if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
+                            while True:
+                                try:
+                                    newvalue= int(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
+                                    break
+                                except ValueError:
+                                    print("Oops!  That was no valid number.  Try again...")
+                            self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
+                        else:
+                            pass
+
                     print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                     input('press any key to continue')
 
@@ -354,7 +365,8 @@ class ParseTreeFolder():
                     any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
                     if any_empty:
                         print('still empty values in {}'.format(empty_col))
-                        wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','manual', 'compute'))
+                        print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nmanual: enter values manually\n')
+                        wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('nothing','manual', 'compute'))
                         if wtd == 'nothing':
                             pass
                         if wtd == 'compute':
@@ -363,10 +375,16 @@ class ParseTreeFolder():
                             input('press any key to continue')
                         if wtd == 'manual':
                             for man in self.frame['Sample_ref_1'].unique():
-                                @self._nice_wrapper
-                                print('individual {}'.format(man))
-                                newvalue=input('What is the new identifiant number?)
-                                self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
+                                if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
+                                    while True:
+                                        try:
+                                            newvalue= int(input('What is the identifiant for "ref number 2" for individual {}:'.format(man)))
+                                            break
+                                        except ValueError:
+                                            print("Oops!  That was no valid number.  Try again...")
+                                    self.frame.loc[self.frame['Sample_ref_1']==man, empty_col]=newvalue
+                                else:
+                                    pass
                             print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                             input('press any key to continue')
 
@@ -386,7 +404,7 @@ class ParseTreeFolder():
         saved the concatened df into a csv file
         '''
         import pandas as pd
-        @self._nice_wrapper
+
         FileSaveName = input('enter final file name:') or 'DefaultTable'
         FileSaveName += '.csv'
         self.final_frame.to_csv(FileSaveName,index=False, header=True)
