@@ -335,7 +335,7 @@ class ParseTreeFolder():
             if any_empty:
                 print('{} contains empty values'.format(empty_col))
                 print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
-                wtd = _get_valid_input(self, 'What do you want to do ?', ('nothing', 'replace'))
+                wtd = _get_valid_input('What do you want to do ?', ('nothing', 'replace'))
                 if wtd == 'nothing':
                     pass
                 else:
