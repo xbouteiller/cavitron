@@ -300,7 +300,7 @@ class ParseTreeFolder():
             print('------------------------------------------')
             print(d)
             li = []
-            print('parsing list of files from : {}'.format(self.listOfFiles[d]))
+            print('parsing list of files from : {}'.format(self.listOfFiles[d][0]))
             for elem in self.listOfFiles[d]:
                 # print(elem)
                 df = ParseFile(path = elem).clean_file()
