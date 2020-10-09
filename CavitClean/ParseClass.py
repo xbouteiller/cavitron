@@ -336,10 +336,14 @@ class ParseTreeFolder():
             if any_empty:
                 print('{} contains empty values'.format(empty_col))
                 print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
-                wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing', 'replace'))
+                wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'replace'))
                 if wtd == 'nothing':
                     pass
-                else:
+                if wtd == 'compute':
+                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
+                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                    input('press any key to continue')
+                if wtd == 'replace':
                     self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
                     print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                     input('press any key to continue')
@@ -353,8 +357,6 @@ class ParseTreeFolder():
                             self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
                             print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                             input('press any key to continue')
-
-
 
             li_all.append(self.frame)
 
