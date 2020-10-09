@@ -364,7 +364,8 @@ class ParseTreeFolder():
                         if wtd == 'manual':
                             for man in self.frame['Sample_ref_1'].unique():
                                 @self._nice_wrapper
-                                newvalue=input('What is the identifiant for "ref number 2" for individual {}'.format(man))
+                                print('individual {}'.format(man))
+                                newvalue=input('What is the new identifiant number?)
                                 self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
                             print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
                             input('press any key to continue')
