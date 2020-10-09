@@ -9,7 +9,7 @@ time.sleep(2)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
-empty_col=['Sample_ref_2']
+empty_col='Sample_ref_2'
 
 # python setup.py develop
 
