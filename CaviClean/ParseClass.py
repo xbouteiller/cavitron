@@ -1,8 +1,8 @@
 import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
-print('---------------             CavitClean             ---------------------')
-print('---------------                 V3.0               ---------------------')
+print('---------------              CaviClean             ---------------------')
+print('---------------                 V4.0               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -41,7 +41,7 @@ class ParseFile():
         print("\n")
         print("\ndim of text file is :\n -nrow: {}\n -ncol: {}".format(self.file.shape[0],self.file.shape[1]))
         print("\n")
-        # print(self.file.dtypes)
+
 
     def clean_file(self):
         '''
@@ -53,47 +53,14 @@ class ParseFile():
 
         #drop full na
         self.file = self.file.dropna(axis = 0, how = 'all')
-        # self.file = self.file.dropna(axis = 1, how = 'all')
-        # self.file = self.file.fillna('None') ###################
-        # remove ;
-        # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
 
         # convert to numeric if possible
         self.file = self.file.apply(lambda x: pd.to_numeric(x, errors ="ignore"))
 
         # lower strings
         self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
-        # self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
 
         return self.file
-
-    # def _check_num(self, col):
-    #     import pandas as pd
-    #     check_num = self.file[col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
-    #     self.check_num = check_num
-    #     if all(check_num):
-    #         print('columns {} are numeric'.format(col))
-    #     else:
-    #         print('at least one value is not numeric')
-    #
-    # def _check_group(self, col):
-    #
-    #     check_group = [len(self.file[c].unique())==1 for c in col]
-    #     self.check_group = check_group
-    #     if all(check_group):
-    #         print('group are ok'.format(col))
-    #     else:
-    #         print('at least one group is not ok')
-    #
-    #
-    # def assess_file(self, num_col = num_col, group_col= group_col):
-    #     '''
-    #     print the values extracted from the file
-    #     '''
-    #     self._check_num(col = num_col)
-    #     self._check_group(col = group_col)
-
-
 
 
 
@@ -137,22 +104,14 @@ class ParseTreeFolder():
         for elem in self.listOfFiles:
             print(elem)
 
-    # def _nice_wrapper(self, fun):
-    #     def wrapper():
-    #         print('\n---------------------------------')
-    #         func()
-    #         print('---------------------------------\n')
-    #
-    #     return wrapper
-
     def _check_num(self, _df, _col):
         import pandas as pd
         check_num = _df[_col].applymap(lambda x: isinstance(x, (int, float))).apply(lambda x: all(x))
 
-        if all(check_num):
-            print('columns {} are numeric'.format(_col))
-        else:
-            print('at least one value is not numeric')
+        # if all(check_num):
+        #     print('columns {} are numeric'.format(_col))
+        # else:
+        #     print('at least one value is not numeric')
 
         return [all(check_num), check_num]
 
@@ -161,10 +120,10 @@ class ParseTreeFolder():
 
         check_group = [len(_df[c].unique())==1 for c in _col]
 
-        if all(check_group):
-            print('group are ok'.format(_col))
-        else:
-            print('at least one group is not ok')
+        # if all(check_group):
+        #     print('group are ok'.format(_col))
+        # else:
+        #     print('at least one group is not ok')
 
         return [all(check_group), check_group]
 
@@ -174,10 +133,12 @@ class ParseTreeFolder():
         import pandas as pd
         check_empty = self.frame[_col].isna()
 
-        if any(check_empty):
-            print('one value of {} is empty'.format(_col))
-        else:
-            print('contains no empty value'.format(_col))
+        # if any(check_empty):
+        #     print('\n\n------------------------------------------')
+        #     print('one value of {} is empty'.format(_col))
+        # else:
+        #     print('\n\n------------------------------------------')
+        #     print('contains no empty value'.format(_col))
 
         return [any(check_empty), check_empty]
 
@@ -297,7 +258,8 @@ class ParseTreeFolder():
             print('------------------------------------------')
             print(d)
             li = []
-            print('parsing list of files from : {}'.format(self.listOfFiles[d][0]))
+            self.presentfile=self.listOfFiles[d][0]
+            print('parsing list of files from : {}'.format(self.presentfile))
             for elem in self.listOfFiles[d]:
                 # print(elem)
                 df = ParseFile(path = elem).clean_file()
@@ -306,15 +268,37 @@ class ParseTreeFolder():
 
             self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
             print('shape of frame is {}'.format(self.frame.shape))
+            self.check_frame_num()
+            self.check_frame_group()
+            self.check_frame_empty()
+            li_all.append(self.frame)
+            #check integrity
 
-            all_cn = self._check_num(_df = self.frame , _col= num_col)[0]
-            cn = self._check_num(_df = self.frame , _col= num_col)[1]
+        self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
+        print('shape of final frame is {}'.format(self.final_frame.shape))
 
+        return self.final_frame
+
+    def check_frame_num(self):
+            all_cn, cn = self._check_num(_df = self.frame , _col= num_col)
+            # cn = self._check_num(_df = self.frame , _col= num_col)[1]
+
+            # if not all_cn:
+            #     print('\n -----------------------')
+            #     [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
+            #     input('press any key to continue')
             if not all_cn:
                 print('\n -----------------------')
                 [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
-                input('-NUM ALERT- press any key to continue')
 
+                for i, j in zip(all_cn, cn):
+                    if not j:
+                        self.i=i
+                        print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
+                        self.run()
+
+
+    def check_frame_group(self):
             all_cg = self._check_group(_df = self.frame , _col = group_col)[0]
             cg = self._check_group(_df = self.frame , _col = group_col)[1]
             if not all_cg:
@@ -327,75 +311,58 @@ class ParseTreeFolder():
                         print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
                         self.run()
 
-            any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-            empty = self._check_empty(_df = self.frame , _col= empty_col)[1]
-            if any_empty:
-                print('\n -----------------------')
-                print('{} contains empty values'.format(empty_col))
-                print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
-                print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nextract: extract numbers from Comment\nmanual: enter values manually\n')
-                wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'extract', 'manual'))
-                if wtd == 'nothing':
-                    pass
-                if wtd == 'compute':
-                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
-                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                    input('press any key to continue')
 
-                if wtd == 'manual':
-                    for man in self.frame['Sample_ref_1'].unique():
-                        if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
-                            while True:
-                                try:
-                                    newvalue= int(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
-                                    break
-                                except ValueError:
-                                    print("Oops!  That was no valid number.  Try again...")
-                            self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
-                        else:
-                            pass
+    def _compute_empty(self):
+        self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
+        print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+        input('press any key to continue')
 
-                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                    input('press any key to continue')
+    def _manual_empty(self):
+        for man in self.frame['Sample_ref_1'].unique():
+            if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
+                while True:
+                    try:
+                        newvalue= int(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
+                        break
+                    except ValueError:
+                        print("Oops!  That was no valid number.  Try again...")
+                self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
+            else:
+                pass
 
-                if wtd == 'extract':
-                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
-                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                    input('press any key to continue')
-                    any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-                    if any_empty:
-                        print('still empty values in {}'.format(empty_col))
-                        print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nmanual: enter values manually\n')
-                        wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('nothing','manual', 'compute'))
-                        if wtd == 'nothing':
-                            pass
-                        if wtd == 'compute':
-                            self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
-                            print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                            input('press any key to continue')
-                        if wtd == 'manual':
-                            for man in self.frame['Sample_ref_1'].unique():
-                                if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
-                                    while True:
-                                        try:
-                                            newvalue= int(input('What is the identifiant for "ref number 2" for individual {}:'.format(man)))
-                                            break
-                                        except ValueError:
-                                            print("Oops!  That was no valid number.  Try again...")
-                                    self.frame.loc[self.frame['Sample_ref_1']==man, empty_col]=newvalue
-                                else:
-                                    pass
-                            print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
-                            input('press any key to continue')
+        print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+        input('press any key to continue')
 
-            li_all.append(self.frame)
+    def _extract_empty(self):
+        self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
+        print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+        input('press any key to continue')
 
-            #check integrity
+    def check_frame_empty(self):
+        any_empty, empty = self._check_empty(_df = self.frame , _col= empty_col)
 
-        self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
-        print('shape of final frame is {}'.format(self.final_frame.shape))
+        while any_empty:
+            print('\n -----------------------')
+            print('parsing list of files from : {}\n'.format(self.presentfile))
 
-        return self.final_frame
+            print('{} contains empty values'.format(empty_col))
+            print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
+            print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nextract: extract numbers from Comment\nmanual: enter values manually\n')
+            wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'extract', 'manual'))
+            if wtd == 'nothing':
+                break
+            if wtd == 'compute':
+                self._compute_empty()
+                any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+            if wtd == 'manual':
+                self._manual_empty()
+                any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+            if wtd == 'extract':
+                self._extract_empty()
+                any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+
+        print('\nExit from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+
 
 
 

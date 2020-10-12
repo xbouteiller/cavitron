@@ -3,7 +3,7 @@ if __name__=="__main__":
     #%% Dependencies
     import os
 
-    from CavitClean.ParseClass import ParseFile, ParseTreeFolder
+    from CaviClean.ParseClass import ParseFile, ParseTreeFolder
 
     # ENTER FOLDER PATH HERE
     root = "C:\\Users\\Xavier\\Thèse\\Nouveau dossier"
