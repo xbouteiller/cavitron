@@ -2,13 +2,15 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------             CavitClean             ---------------------')
-print('---------------                 V1.0               ---------------------')
+print('---------------                 V3.0               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Sampling_location', 'Treatment', 'Operator']
+empty_col='Sample_ref_2'
+
 # python setup.py develop
 
 class ParseFile():
@@ -51,7 +53,7 @@ class ParseFile():
 
         #drop full na
         self.file = self.file.dropna(axis = 0, how = 'all')
-        self.file = self.file.dropna(axis = 1, how = 'all')
+        # self.file = self.file.dropna(axis = 1, how = 'all')
         # self.file = self.file.fillna('None') ###################
         # remove ;
         # self.file = self.file.applymap(lambda x: re.sub(';', '', str(x) if x is not np.nan else x))
@@ -135,6 +137,13 @@ class ParseTreeFolder():
         for elem in self.listOfFiles:
             print(elem)
 
+    # def _nice_wrapper(self, fun):
+    #     def wrapper():
+    #         print('\n---------------------------------')
+    #         func()
+    #         print('---------------------------------\n')
+    #
+    #     return wrapper
 
     def _check_num(self, _df, _col):
         import pandas as pd
@@ -159,8 +168,23 @@ class ParseTreeFolder():
 
         return [all(check_group), check_group]
 
+
+    def _check_empty(self, _df, _col):
+
+        import pandas as pd
+        check_empty = self.frame[_col].isna()
+
+        if any(check_empty):
+            print('one value of {} is empty'.format(_col))
+        else:
+            print('contains no empty value'.format(_col))
+
+        return [any(check_empty), check_empty]
+
+
+
     def _get_valid_input(self, input_string, valid_options):
-        input_string += "({}) ".format("\n,\n ".join(valid_options))
+        input_string += "({}) ".format(", ".join(valid_options))
         response = input(input_string)
         while response.lower() not in valid_options:
             response = input(input_string)
@@ -190,7 +214,7 @@ class ParseTreeFolder():
             self.run()
 
     def do_nothing(self):
-        print('chose to do nothing')
+        print('chose to do nothing\n')
         pass
     def modify(self):
         import numpy as np
@@ -215,22 +239,12 @@ class ParseTreeFolder():
         print('choose to extract strings')
         import re
         import numpy as np
-        # print(self.frame[self.i])
-        # self.frame[self.i] =  self.frame[self.i]
-        # reg = [re.findall(r'[a-zA-Z]+', f) for f in self.frame[self.i]] #if f!='None' else f[0]
-        # reg=[]
+
         print('col',self.frame[self.i])
-        # for f in self.frame[self.i].values:
-        #     print('f',f)
-        #     if f==np.nan:
-        #         reg.append(np.nan)
-        #     else:
-        #         reg.append(re.findall(r'[a-zA-Z]+', f))
+
 
         self.frame[self.i]=self.frame[self.i].str.extract('([a-zA-Z]+)', expand = False)
 
-        # self.frame[self.i]=np.array(reg)
-        # print('modified to {}'.format(np.unique(np.array(reg))))
         print('modified to {}'.format(self.frame[self.i].unique()))
         inp=input('press any key to continue --- or enter 1 to modify values ---')
         if inp == str(1):
@@ -244,7 +258,7 @@ class ParseTreeFolder():
         import numpy as np
         print('col',self.frame[self.i])
         reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
-        print(reg)
+
         self.frame[self.i]=reg[0]
         self.frame['Sample_ref_2']=reg[1]#.astype('int')
         print('modified {} to {}'.format(self.i, self.frame[self.i].unique()))
@@ -283,8 +297,9 @@ class ParseTreeFolder():
             print('------------------------------------------')
             print(d)
             li = []
+            print('parsing list of files from : {}'.format(self.listOfFiles[d][0]))
             for elem in self.listOfFiles[d]:
-                print(elem)
+                # print(elem)
                 df = ParseFile(path = elem).clean_file()
                 # print(df)
                 li.append(df)
@@ -305,7 +320,6 @@ class ParseTreeFolder():
             if not all_cg:
                 print('\n -----------------------')
                 [print('label of col {} is unique'.format(i)) if j else print('label of col {} is NOT unique'.format(i)) for i, j in zip(group_col, cg)]
-                # [i if j else print('labels of col {} are {}'.format(i, frame[i].unique())) for i, j in zip(group_col, cg)]
 
                 for i, j in zip(group_col, cg):
                     if not j:
@@ -313,6 +327,66 @@ class ParseTreeFolder():
                         print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
                         self.run()
 
+            any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+            empty = self._check_empty(_df = self.frame , _col= empty_col)[1]
+            if any_empty:
+                print('\n -----------------------')
+                print('{} contains empty values'.format(empty_col))
+                print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
+                print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nextract: extract numbers from Comment\nmanual: enter values manually\n')
+                wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'extract', 'manual'))
+                if wtd == 'nothing':
+                    pass
+                if wtd == 'compute':
+                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
+                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                    input('press any key to continue')
+
+                if wtd == 'manual':
+                    for man in self.frame['Sample_ref_1'].unique():
+                        if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
+                            while True:
+                                try:
+                                    newvalue= int(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
+                                    break
+                                except ValueError:
+                                    print("Oops!  That was no valid number.  Try again...")
+                            self.frame.loc[self.frame['Sample_ref_1']==man,empty_col]=newvalue
+                        else:
+                            pass
+
+                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                    input('press any key to continue')
+
+                if wtd == 'extract':
+                    self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Comment'].str.extract('(\d+)', expand = False))
+                    print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                    input('press any key to continue')
+                    any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
+                    if any_empty:
+                        print('still empty values in {}'.format(empty_col))
+                        print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nmanual: enter values manually\n')
+                        wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('nothing','manual', 'compute'))
+                        if wtd == 'nothing':
+                            pass
+                        if wtd == 'compute':
+                            self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
+                            print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                            input('press any key to continue')
+                        if wtd == 'manual':
+                            for man in self.frame['Sample_ref_1'].unique():
+                                if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
+                                    while True:
+                                        try:
+                                            newvalue= int(input('What is the identifiant for "ref number 2" for individual {}:'.format(man)))
+                                            break
+                                        except ValueError:
+                                            print("Oops!  That was no valid number.  Try again...")
+                                    self.frame.loc[self.frame['Sample_ref_1']==man, empty_col]=newvalue
+                                else:
+                                    pass
+                            print('new value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+                            input('press any key to continue')
 
             li_all.append(self.frame)
 
@@ -325,10 +399,13 @@ class ParseTreeFolder():
 
 
 
-    def save_finaldf(self, FileSaveName='Formanrisk.csv'):
+    def save_finaldf(self):
         '''
         saved the concatened df into a csv file
         '''
         import pandas as pd
+
+        FileSaveName = input('enter final file name:') or 'DefaultTable'
+        FileSaveName += '.csv'
         self.final_frame.to_csv(FileSaveName,index=False, header=True)
         print('saved file {}'.format(FileSaveName))

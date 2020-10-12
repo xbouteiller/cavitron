@@ -1,5 +1,36 @@
 import os
 import re
+import numpy as np
+import pandas as pd
+z1=['sample 1', 'ddsfdsf 165654', '464654']
+z=['sample 1', 'ddsfdsf 165654', '464654', 'sddsd', np.nan, '', 'sample 69 ae', 'Y 1', '1654 44554']
+print(z)
+pd.Series(z)
+[re.findall(r'[a-zA-Z]+', f) for f in pd.Series(z)]
+
+pd.Series(z).isna()
+
+
+[f for f in pd.Series(z)]
+a=[]
+np.array([a.append(re.findall(r'[a-zA-Z]+', f)) for f in pd.Series(z1)])
+
+
+pd.Series(z).str.extract('(\d+)', expand = False)
+pd.Series(z).str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
+
+
+
+
+re.findall(r'[a-zA-Z]+', z1)
+
+
+a=[]
+for f in pd.Series(z):
+    print(re.findall(r'[a-zA-Z]+', f))
+
+zdf = pd.DataFrame(z)
+zdf[
 
 root = "C:/Users/Xavier/CavitClean/test"
 
