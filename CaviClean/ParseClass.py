@@ -235,12 +235,12 @@ class ParseTreeFolder():
         import numpy as np
         import pandas as pd
         print('choose to do erase rows')
-                while True:
-        try:
-            nval = int(input('how many values do you want to erase ?'))
-            break
-        except ValueError:
-            print("Oops!  That was no valid number.  Try again...")
+        while True:
+            try:
+                nval = int(input('how many values do you want to erase ?'))
+                break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
 
 
         for i in np.arange(0,nval):
