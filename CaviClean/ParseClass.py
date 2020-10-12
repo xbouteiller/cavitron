@@ -291,7 +291,7 @@ class ParseTreeFolder():
                 print('\n -----------------------')
                 [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
 
-                for i, j in zip(all_cn, cn):
+                for i, j in zip(num_col, cn):
                     if not j:
                         self.i=i
                         print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
