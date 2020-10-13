@@ -177,6 +177,7 @@ class ParseTreeFolder():
     def do_nothing(self):
         print('chose to do nothing\n')
         pass
+
     def modify(self):
         import numpy as np
         import pandas as pd
@@ -184,14 +185,14 @@ class ParseTreeFolder():
 
         while True:
             try:
-                nval = int(input('how many values do you want to modify ?'))
+                nval = int(input('how many values do you want to modify ? '))
                 break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
 
         for i in np.arange(0,nval):
-            tobemodified = input('Which value do you want to change ?')
-            newvalue = input('What is the new value ?')
+            tobemodified = input('Which value do you want to change ? ')
+            newvalue = input('What is the new value ? ')
             self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
@@ -217,7 +218,7 @@ class ParseTreeFolder():
         print('choose to extract strings and numbers')
         import re
         import numpy as np
-        print('col',self.frame[self.i])
+        # print('col',self.frame[self.i])
         reg = self.frame[self.i].str.extract('([a-zA-Z]+)\W(\d+)', expand = False)
 
         self.frame[self.i]=reg[0]
@@ -237,14 +238,14 @@ class ParseTreeFolder():
         print('choose to do erase rows')
         while True:
             try:
-                nval = int(input('how many values do you want to erase ?'))
+                nval = int(input('how many values do you want to erase ? '))
                 break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
 
 
         for i in np.arange(0,nval):
-            tobemodified = input('Which row value do you want to erase ?')
+            tobemodified = input('Which row value do you want to erase ? ')
             self.frame=self.frame[self.frame[self.i]!=tobemodified]
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
@@ -287,27 +288,38 @@ class ParseTreeFolder():
         return self.final_frame
 
     def check_frame_num(self):
-            all_cn, cn = self._check_num(_df = self.frame , _col= num_col)
-            # cn = self._check_num(_df = self.frame , _col= num_col)[1]
+        import pandas as pd
+        all_cn, cn = self._check_num(_df = self.frame , _col= num_col)
+        # cn = self._check_num(_df = self.frame , _col= num_col)[1]
 
-            # if not all_cn:
-            #     print('\n -----------------------')
-            #     [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
-            #     input('press any key to continue')
-            if not all_cn:
-                print('\n -----------------------')
-                [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
+        # if not all_cn:
+        #     print('\n -----------------------')
+        #     [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
+        #     input('press any key to continue')
+        if not all_cn:
+            print('\n -----------------------')
+            [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
 
-                for i, j in zip(num_col, cn):
-                    if not j:
-                        self.i=i
-                        print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
-                        self.run()
+            for i, j in zip(num_col, cn):
+                if not j:
+                    self.i=i
+                    # I want to register on my log the message recived on ORIGINAL VALUE
+                    # print(self.frame[self.i].head())
+                    mask = pd.to_numeric(self.frame[self.i], errors='coerce').isna()
+                    #if possible missing values
+                    # mask = pd.to_numeric(df['ORIGINAL_VALUE'].fillna('0'), errors='coerce').isna()
+                    L = self.frame.loc[mask, self.i].tolist()
+                    print('\nin col {}'.format(self.i))
+                    print ("Not converted to numeric values are: " + ", ".join(L))
+
+                    print('What do you want to do ? ')
+                    self.run()
+
 
 
     def check_frame_group(self):
-            all_cg = self._check_group(_df = self.frame , _col = group_col)[0]
-            cg = self._check_group(_df = self.frame , _col = group_col)[1]
+            all_cg, cg= self._check_group(_df = self.frame , _col = group_col)#[0]
+            # cg = self._check_group(_df = self.frame , _col = group_col)[1]
             if not all_cg:
                 print('\n -----------------------')
                 [print('label of col {} is unique'.format(i)) if j else print('label of col {} is NOT unique'.format(i)) for i, j in zip(group_col, cg)]
@@ -354,8 +366,16 @@ class ParseTreeFolder():
 
             print('{} contains empty values'.format(empty_col))
             print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
-            print('\n--------------------\nList of choices\n\nnothing: do nothing\ncompute: calculate from 1 to n\nextract: extract numbers from Comment\nmanual: enter values manually\n')
-            wtd = self._get_valid_input('What do you want to do ? Choose one of:', ('nothing','compute', 'extract', 'manual'))
+            print('''
+            --------------------
+            List of choices
+
+            nothing: do nothing
+            compute: calculate from 1 to n
+            extract: extract numbers from Comment columns
+            manual: enter values manually
+            ''')
+            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('nothing','compute', 'extract', 'manual'))
             if wtd == 'nothing':
                 break
             if wtd == 'compute':
