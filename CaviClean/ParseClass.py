@@ -386,12 +386,12 @@ class ParseTreeFolder():
         --------------------
         List of actions
 
-        1: yes, inactive some individuals
-        2: no, escape and continue
+        1: no, escape and continue
+        2: yes, inactive some individuals
         ''')
         wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
 
-        if wtd == '1':
+        if wtd == '2':
             inactive = True
         else:
             inactive = False
@@ -421,7 +421,7 @@ class ParseTreeFolder():
 
         li_all = []
         for d in np.arange(0,dimfolder):
-            print('------------------------------------------')
+            print('\n\n\n---------------------------------------------------------------------')
             print(d)
             li = []
             self.presentfile=self.listOfFiles[d][0]
