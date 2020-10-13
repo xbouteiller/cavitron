@@ -153,6 +153,7 @@ class ParseTreeFolder():
 
     def display_menu(self):
         print("""
+        --------------------
         List of actions
 
         1. do nothing
@@ -250,42 +251,6 @@ class ParseTreeFolder():
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
 
-    def append_values(self):
-        '''
-        method for filling the lists
-        '''
-
-        import numpy as np
-        import pandas as pd
-
-        dimfolder = len(self.listOfFiles)
-
-
-        li_all = []
-        for d in np.arange(0,dimfolder):
-            print('------------------------------------------')
-            print(d)
-            li = []
-            self.presentfile=self.listOfFiles[d][0]
-            print('parsing list of files from : {}'.format(self.presentfile))
-            for elem in self.listOfFiles[d]:
-                # print(elem)
-                df = ParseFile(path = elem).clean_file()
-                # print(df)
-                li.append(df)
-
-            self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
-            print('shape of frame is {}'.format(self.frame.shape))
-            self.check_frame_num()
-            self.check_frame_group()
-            self.check_frame_empty()
-            li_all.append(self.frame)
-            #check integrity
-
-        self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
-        print('shape of final frame is {}'.format(self.final_frame.shape))
-
-        return self.final_frame
 
     def check_frame_num(self):
         import pandas as pd
@@ -297,7 +262,7 @@ class ParseTreeFolder():
         #     [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
         #     input('press any key to continue')
         if not all_cn:
-            print('\n -----------------------')
+            print('\n ---------------------------------------------------------------------')
             [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
 
             for i, j in zip(num_col, cn):
@@ -321,7 +286,7 @@ class ParseTreeFolder():
             all_cg, cg= self._check_group(_df = self.frame , _col = group_col)#[0]
             # cg = self._check_group(_df = self.frame , _col = group_col)[1]
             if not all_cg:
-                print('\n -----------------------')
+                print('\n ---------------------------------------------------------------------')
                 [print('label of col {} is unique'.format(i)) if j else print('label of col {} is NOT unique'.format(i)) for i, j in zip(group_col, cg)]
 
                 for i, j in zip(group_col, cg):
@@ -329,7 +294,6 @@ class ParseTreeFolder():
                         self.i=i
                         print('labels of col {} are {}\nWhat do you want to do ?'.format(self.i, self.frame[self.i].unique()))
                         self.run()
-
 
     def _compute_empty(self):
         self.frame[empty_col]=self.frame[empty_col].fillna(self.frame['Sample_ref_1']-self.frame['Sample_ref_1'].min())
@@ -361,36 +325,126 @@ class ParseTreeFolder():
         any_empty, empty = self._check_empty(_df = self.frame , _col= empty_col)
 
         while any_empty:
-            print('\n -----------------------')
+            print('\n ---------------------------------------------------------------------')
             print('parsing list of files from : {}\n'.format(self.presentfile))
 
             print('{} contains empty values'.format(empty_col))
             print('value in Comment columns are {}'.format(self.frame['Comment'].unique()))
             print('''
             --------------------
-            List of choices
+            List of actions
 
-            nothing: do nothing
-            compute: calculate from 1 to n
-            extract: extract numbers from Comment columns
-            manual: enter values manually
+            1: do nothing
+            2: calculate from 1 to n
+            3: extract numbers from Comment columns
+            4: enter values manually
             ''')
-            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('nothing','compute', 'extract', 'manual'))
-            if wtd == 'nothing':
+            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3', '4'))
+            if wtd == '1':
                 break
-            if wtd == 'compute':
+            if wtd == '2':
                 self._compute_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-            if wtd == 'manual':
+            if wtd == '3':
                 self._manual_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-            if wtd == 'extract':
+            if wtd == '4':
                 self._extract_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
 
-        print('\nExit from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+        print('\nExiting from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
 
 
+    def _inactive_indiv(self):
+        while True:
+            try:
+                newvalue= int(input('What is the identifiant of the individual that you want to inactive ? '))
+                break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
+
+        while True:
+            if newvalue in self.frame['Sample_ref_1'].unique():
+                break
+            else:
+                print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
+                while True:
+                    try:
+                        newvalue= int(input('What is the identifiant of the individual that you want to inactive ? '))
+                        break
+                    except ValueError:
+                        print("Oops!  That was no valid number.  Try again...")
+
+        self.frame.loc[self.frame['Sample_ref_1']==newvalue,'Note']='yes'
+
+
+    def inactive_indiv(self):
+        print('\n ---------------------------------------------------------------------')
+        print('\nDo you want to inactive (turn to yes) some individuals ? ')
+
+        print('''
+        --------------------
+        List of actions
+
+        1: yes, inactive some individuals
+        2: no, escape and continue
+        ''')
+        wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+
+        if wtd == '1':
+            inactive = True
+        else:
+            inactive = False
+
+        while inactive:
+            self._inactive_indiv()
+            exit = input('press any key to continue or enter exit to stop ')
+            if exit == 'exit':
+                inactive = False
+
+        L = self.frame.loc[self.frame['Note']=='yes','Sample_ref_1'].unique().tolist()
+        L = [str(i) for i in L]
+        print('\nExiting from inactivating individuals\ninactivated individuals are : ' + ", ".join(L))
+
+
+
+    def append_values(self):
+        '''
+        method for filling the lists
+        '''
+
+        import numpy as np
+        import pandas as pd
+
+        dimfolder = len(self.listOfFiles)
+
+
+        li_all = []
+        for d in np.arange(0,dimfolder):
+            print('------------------------------------------')
+            print(d)
+            li = []
+            self.presentfile=self.listOfFiles[d][0]
+            print('parsing list of files from : {}'.format(self.presentfile))
+            for elem in self.listOfFiles[d]:
+                # print(elem)
+                df = ParseFile(path = elem).clean_file()
+                # print(df)
+                li.append(df)
+
+            self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
+            print('shape of frame is {}'.format(self.frame.shape))
+            self.check_frame_num()
+            self.check_frame_group()
+            self.check_frame_empty()
+            self.inactive_indiv()
+            li_all.append(self.frame)
+            #check integrity
+
+        self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
+        print('shape of final frame is {}'.format(self.final_frame.shape))
+
+        return self.final_frame
 
 
     def save_finaldf(self):
@@ -399,7 +453,7 @@ class ParseTreeFolder():
         '''
         import pandas as pd
 
-        FileSaveName = input('enter final file name:') or 'DefaultTable'
+        FileSaveName = input('enter final file name : ') or 'DefaultTable'
         FileSaveName += '.csv'
         self.final_frame.to_csv(FileSaveName,index=False, header=True)
         print('saved file {}'.format(FileSaveName))
