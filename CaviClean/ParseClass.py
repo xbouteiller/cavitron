@@ -437,13 +437,93 @@ class ParseTreeFolder():
 
         while inactive:
             self._inactive_indiv()
-            exit = input('press any key to continue or enter exit to stop ')
-            if exit == 'exit':
+            exit = input('press any key to continue or enter -- exit -- to stop ')
+            if exit == 'exit' or exit == 'e':
                 inactive = False
 
         L = self.frame.loc[self.frame['Note']=='yes','Sample_ref_1'].unique().tolist()
         L = [str(i) for i in L]
         print('\nExiting from inactivating individuals\ninactivated individuals are : ' + ", ".join(L))
+
+
+    def _change_values(self):
+
+        num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
+        group_col=['Sampling_location', 'Treatment', 'Operator']
+        empty_col='Sample_ref_2'
+
+
+        print('''
+        --------------------
+        Columns that you can change
+
+        1: Sample_ref_2 (tree number)
+        2: Sampling_location
+        3: Treatment
+        4: Operator
+        5: Note
+        ''')
+        ctc = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2','3','4','5'))
+
+        if ctc == '1':
+            col_to_change = 'Sample_ref_2'
+        if ctc == '2':
+            col_to_change = 'Sampling_location'
+        if ctc == '3':
+            col_to_change = 'Treatment'
+        if ctc == '4':
+            col_to_change = 'Operator'
+        if ctc == '5':
+            col_to_change = 'Note'
+
+        print('\nmodified column will be : {}'.format(col_to_change))
+
+        while True:
+            try:
+                newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
+
+        while True:
+            if newvalue in self.frame['Sample_ref_1'].unique():
+                break
+            else:
+                print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
+                while True:
+                    try:
+                        newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                        break
+                    except ValueError:
+                        print("Oops!  That was no valid number.  Try again...")
+
+        modified_value= input('\nWhat is the new value that you want to change for individual {} in column {} ? '.format(newvalue, col_to_change))
+        self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change]=modified_value
+        assert self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change].unique().tolist() == [modified_value], 'pb with new value'
+
+    def manual_change(self):
+                print('\n ---------------------------------------------------------------------')
+                print('\nDo you want to change manually some values ? ')
+
+                print('''
+                --------------------
+                List of actions
+
+                1: no, escape and continue
+                2: yes, change manually some individuals values
+                ''')
+                wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+
+                if wtd == '2':
+                    change = True
+                else:
+                    change = False
+
+                while change:
+                    self._change_values()
+                    exit = input('press any key to continue or enter -- exit -- to stop ')
+                    if exit == 'exit' or exit == 'e':
+                        change = False
 
 
 
@@ -482,6 +562,7 @@ class ParseTreeFolder():
                 self.check_frame_group()
                 self.check_frame_empty()
                 self.inactive_indiv()
+                self.manual_change()
                 li_all.append(self.frame)
                 #check integrity
             else:
