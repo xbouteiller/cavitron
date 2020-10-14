@@ -462,22 +462,30 @@ class ParseTreeFolder():
             print('\n\n\n---------------------------------------------------------------------')
             print(d)
             li = []
-            self.presentfile=self.listOfFiles[d][0]
+            try:
+                self.presentfile=self.listOfFiles[d][0]
+            except:
+                self.presentfile = 'No file'
             print('parsing list of files from : {}'.format(self.presentfile))
-            for elem in self.listOfFiles[d]:
-                # print(elem)
-                df = ParseFile(path = elem).clean_file()
-                # print(df)
-                li.append(df)
 
-            self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
-            print('shape of frame is {}'.format(self.frame.shape))
-            self.check_frame_num()
-            self.check_frame_group()
-            self.check_frame_empty()
-            self.inactive_indiv()
-            li_all.append(self.frame)
-            #check integrity
+            if self.presentfile != 'No file':
+                for elem in self.listOfFiles[d]:
+                    # print(elem)
+                    df = ParseFile(path = elem).clean_file()
+                    # print(df)
+                    li.append(df)
+
+                self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
+                print('shape of frame is {}'.format(self.frame.shape))
+                self.check_frame_num()
+                self.check_frame_group()
+                self.check_frame_empty()
+                self.inactive_indiv()
+                li_all.append(self.frame)
+                #check integrity
+            else:
+                print('skip empty folder')
+                pass
 
         self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
         print('shape of final frame is {}'.format(self.final_frame.shape))
