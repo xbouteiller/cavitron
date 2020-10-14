@@ -109,6 +109,7 @@ class ParseTreeFolder():
         try:
             file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
             self.listOfFiles.append(file_root)
+            # print(file_root)
         except:
             print('no file detected within root directory')
             pass
@@ -130,7 +131,7 @@ class ParseTreeFolder():
             print('no files detected at all')
             pass
 
-        time.sleep(2)
+        time.sleep(4)
 
         return self.listOfFiles
 
