@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V4.0               ---------------------')
+print('---------------                 V5.0               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -66,9 +66,15 @@ class ParseFile():
 
 class ParseTreeFolder():
 
-    def __init__(self, path):
+    def __init__(self):
         # super().__init__()
-        self.path = path
+        from tkinter import Tk
+        from tkinter.filedialog import askopenfilename, askdirectory
+
+        Tk().withdraw()
+        folder = askdirectory()
+        self.path = folder.replace('/','\\')
+        print('\n\n\nroot path is {}'.format(self.path))
 
         self.choices = {
         "1": self.do_nothing,
@@ -89,10 +95,42 @@ class ParseTreeFolder():
         parse the folder tree and store the full path to target file in a list
         '''
         import os
+        import time
+        import re
+
+        file_root=[]
         self.listOfFiles = []
-        for pa, subdirs, files in os.walk(self.path):
-            for s in subdirs:
-                self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
+
+        # print(os.listdir(self.path))
+        # for f in os.listdir(self.path):
+        #     if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f):
+        #         print(os.path.join(self.path, f))
+
+        try:
+            file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
+            self.listOfFiles.append(file_root)
+        except:
+            print('no file detected within root directory')
+            pass
+
+        try:
+            for pa, subdirs, files in os.walk(self.path):
+                for s in subdirs:
+                    self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
+        except:
+            print('no file detected within childs directory')
+            pass
+
+        # [print(len(i)) for i in self.listOfFiles]
+        # [print("- find : {0} matching files\n".format(len(i))) for i in self.listOfFiles]
+        print('\n')
+        try:
+            [print("- find : {0} matching files in folder {1}".format(len(i),j)) for i,j in zip(self.listOfFiles, range(1,len(self.listOfFiles)+1))]
+        except:
+            print('no files detected at all')
+            pass
+
+        time.sleep(2)
 
         return self.listOfFiles
 

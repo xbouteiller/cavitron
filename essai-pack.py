@@ -1,4 +1,4 @@
-if __name__=="__main__":
+f __name__=="__main__":
 
     #%% Dependencies
     import os
