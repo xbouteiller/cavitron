@@ -72,7 +72,7 @@ class ParseTreeFolder():
         from tkinter.filedialog import askopenfilename, askdirectory
 
         Tk().withdraw()
-        folder = askdirectory()
+        folder = askdirectory(title='What is the root folder that you want to parse ?')
         self.path = folder.replace('/','\\')
         print('\n\n\nroot path is {}'.format(self.path))
 
@@ -499,6 +499,7 @@ class ParseTreeFolder():
 
         modified_value= input('\nWhat is the new value that you want to change for individual {} in column {} ? '.format(newvalue, col_to_change))
         self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change]=modified_value
+        # print(self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change])
         assert self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change].unique().tolist() == [modified_value], 'pb with new value'
 
     def manual_change(self):
