@@ -17,7 +17,7 @@ class ParseFile():
     import pandas as pd
     import numpy as np
 
-    def __init__(self, path, skipfoot=43):
+    def __init__(self, path, skipr=1):
         '''
         initialization
         path of the file
@@ -29,7 +29,7 @@ class ParseFile():
 
         import pandas as pd
         import numpy as np
-        self.file = pd.read_csv(path, skiprows=1, sep = ",")
+        self.file = pd.read_csv(path, skiprows=skipr, sep = ",")
 
     def desc_file(self):
         '''
@@ -71,10 +71,26 @@ class ParseTreeFolder():
         from tkinter import Tk
         from tkinter.filedialog import askopenfilename, askdirectory
 
-        Tk().withdraw()
-        folder = askdirectory(title='What is the root folder that you want to parse ?')
-        self.path = folder.replace('/','\\')
-        print('\n\n\nroot path is {}'.format(self.path))
+
+        print('''
+        WELCOME TO CAVICLEAN
+        Do you want to parse a folder and concatenate files or to check an unique file ?
+
+        1: Parse a folder
+        2: Check individual file
+        ''')
+        self.file_or_folder = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+
+        if self.file_or_folder== '1':
+            Tk().withdraw()
+            folder = askdirectory(title='What is the root folder that you want to parse ?')
+            self.path = folder.replace('/','\\')
+            print('\n\n\nroot path is {}'.format(self.path))
+        else:
+            Tk().withdraw()
+            file = askopenfilename(title='What is the file that you want to check ?')
+            self.path = file.replace('/','\\')
+            print('\n\n\nfile path is {}'.format(self.path))
 
         self.choices = {
         "1": self.do_nothing,
@@ -98,42 +114,46 @@ class ParseTreeFolder():
         import time
         import re
 
-        file_root=[]
-        self.listOfFiles = []
+        if self.file_or_folder=='2':
+            self.listOfFiles=[[self.path]]
+            # print(self.listOfFiles)
+        else:
+            file_root=[]
+            self.listOfFiles = []
 
-        # print(os.listdir(self.path))
-        # for f in os.listdir(self.path):
-        #     if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f):
-        #         print(os.path.join(self.path, f))
+            # print(os.listdir(self.path))
+            # for f in os.listdir(self.path):
+            #     if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f):
+            #         print(os.path.join(self.path, f))
 
-        try:
-            file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
-            self.listOfFiles.append(file_root)
-            # print(file_root)
-        except:
-            print('no file detected within root directory')
-            pass
+            try:
+                file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
+                self.listOfFiles.append(file_root)
+                # print(file_root)
+            except:
+                print('no file detected within root directory')
+                pass
 
-        try:
-            for pa, subdirs, files in os.walk(self.path):
-                for s in subdirs:
-                    self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
-        except:
-            print('no file detected within childs directory')
-            pass
+            try:
+                for pa, subdirs, files in os.walk(self.path):
+                    for s in subdirs:
+                        self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
+            except:
+                print('no file detected within childs directory')
+                pass
 
-        # [print(len(i)) for i in self.listOfFiles]
-        # [print("- find : {0} matching files\n".format(len(i))) for i in self.listOfFiles]
-        print('\n')
-        try:
-            [print("- find : {0} matching files in folder {1}".format(len(i),j)) for i,j in zip(self.listOfFiles, range(1,len(self.listOfFiles)+1))]
-        except:
-            print('no files detected at all')
-            pass
+            # [print(len(i)) for i in self.listOfFiles]
+            # [print("- find : {0} matching files\n".format(len(i))) for i in self.listOfFiles]
+            print('\n')
+            try:
+                [print("- find : {0} matching files in folder {1}".format(len(i),j)) for i,j in zip(self.listOfFiles, range(1,len(self.listOfFiles)+1))]
+            except:
+                print('no files detected at all')
+                pass
 
-        time.sleep(4)
+            time.sleep(4)
 
-        return self.listOfFiles
+            return self.listOfFiles
 
     def print_listofiles(self):
         '''
@@ -385,10 +405,10 @@ class ParseTreeFolder():
                 self._compute_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
             if wtd == '3':
-                self._manual_empty()
+                self._extract_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
             if wtd == '4':
-                self._extract_empty()
+                self._manual_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
 
         print('\nExiting from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
@@ -553,7 +573,11 @@ class ParseTreeFolder():
             if self.presentfile != 'No file':
                 for elem in self.listOfFiles[d]:
                     # print(elem)
-                    df = ParseFile(path = elem).clean_file()
+                    if self.file_or_folder== '1':
+                        skip=1
+                    else:
+                        skip=0
+                    df = ParseFile(path = elem, skipr=skip).clean_file()
                     # print(df)
                     li.append(df)
 
