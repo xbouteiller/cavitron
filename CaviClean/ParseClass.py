@@ -605,8 +605,36 @@ class ParseTreeFolder():
         saved the concatened df into a csv file
         '''
         import pandas as pd
+        import os
+        from tkinter import Tk
+        from tkinter.filedialog import asksaveasfilename
 
-        FileSaveName = input('enter final file name : ') or 'DefaultTable'
-        FileSaveName += '.csv'
+        print('\n\n---------------------------------------------------------------------')
+        if self.file_or_folder== '1':
+            print('initialdir {} '.format(self.path))
+            print('initialfile {} '.format(os.path.basename(os.path.normpath(self.path))))
+            idir=self.path
+            ifile=os.path.basename(os.path.normpath(self.path))
+
+        if self.file_or_folder== '2':
+            print('initialdir {} '.format(os.path.dirname(self.path)))
+            print('initialfile {} '.format(os.path.basename(self.path)))
+            idir=os.path.dirname(self.path)
+            ifile=os.path.basename(self.path)
+
+        Tk().withdraw()
+        FileSaveName=asksaveasfilename(defaultextension='.csv', filetypes=[("csv files", '*.csv')],
+                initialdir=idir,
+                initialfile=ifile,
+                title="Choose filename")
+
+        try:
+            print('\nfile name is : {} '.format(os.path.basename(FileSaveName)))
+            print('file is saved to : {} '.format(os.path.dirname(FileSaveName)))
+        except:
+            print('no file name detected, saved to DefaultTable.csv')
+            FileSaveName = input('enter final file name : ') or 'DefaultTable'
+            FileSaveName += '.csv'
+
         self.final_frame.to_csv(FileSaveName,index=False, header=True)
-        print('saved file {}'.format(FileSaveName))
+        print('saved file {}\n'.format(FileSaveName))
