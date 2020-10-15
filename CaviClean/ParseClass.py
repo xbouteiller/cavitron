@@ -482,8 +482,9 @@ class ParseTreeFolder():
         3: Treatment
         4: Operator
         5: Note
+        6: exit
         ''')
-        ctc = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2','3','4','5'))
+        ctc = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2','3','4','5','6'))
 
         if ctc == '1':
             col_to_change = 'Sample_ref_2'
@@ -495,32 +496,37 @@ class ParseTreeFolder():
             col_to_change = 'Operator'
         if ctc == '5':
             col_to_change = 'Note'
+        if ctc == '6':
+            col_to_change = '-- exiting--'
 
         print('\nmodified column will be : {}'.format(col_to_change))
 
-        while True:
-            try:
-                newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
-                break
-            except ValueError:
-                print("Oops!  That was no valid number.  Try again...")
+        if ctc == '6':
+            pass
+        else:
+            while True:
+                try:
+                    newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                    break
+                except ValueError:
+                    print("Oops!  That was no valid number.  Try again...")
 
-        while True:
-            if newvalue in self.frame['Sample_ref_1'].unique():
-                break
-            else:
-                print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
-                while True:
-                    try:
-                        newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
-                        break
-                    except ValueError:
-                        print("Oops!  That was no valid number.  Try again...")
+            while True:
+                if newvalue in self.frame['Sample_ref_1'].unique():
+                    break
+                else:
+                    print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
+                    while True:
+                        try:
+                            newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                            break
+                        except ValueError:
+                            print("Oops!  That was no valid number.  Try again...")
 
-        modified_value= input('\nWhat is the new value that you want to change for individual {} in column {} ? '.format(newvalue, col_to_change))
-        self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change]=modified_value
-        # print(self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change])
-        assert self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change].unique().tolist() == [modified_value], 'pb with new value'
+            modified_value= input('\nWhat is the new value that you want to change for individual {} in column {} ? '.format(newvalue, col_to_change))
+            self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change]=modified_value
+            # print(self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change])
+            assert self.frame.loc[self.frame['Sample_ref_1']==newvalue,col_to_change].unique().tolist() == [modified_value], 'pb with new value'
 
     def manual_change(self):
                 print('\n ---------------------------------------------------------------------')
@@ -599,6 +605,20 @@ class ParseTreeFolder():
 
         return self.final_frame
 
+    def _summarize_df(self):
+        import pandas as pd
+        import numpy as np
+
+        print('\n\n---------------------------------------------------------------------')
+        print('data frame summary')
+        print('\nnumerical columns')
+        for i in num_col:
+            print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}'.format(i,np.mean(self.frame[i]),np.std(self.frame[i])))
+
+        print('\ncategorical columns')
+        for i in group_col+['Note']:
+            print('- for : {}, categories are : {}'.format(i,self.frame[i].unique().tolist()))
+            print(self.frame[i].value_counts())
 
     def save_finaldf(self):
         '''
@@ -608,6 +628,10 @@ class ParseTreeFolder():
         import os
         from tkinter import Tk
         from tkinter.filedialog import asksaveasfilename
+        import time
+
+        self._summarize_df()
+        time.sleep(5)
 
         print('\n\n---------------------------------------------------------------------')
         if self.file_or_folder== '1':
