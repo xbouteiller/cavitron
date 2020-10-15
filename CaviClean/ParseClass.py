@@ -611,7 +611,7 @@ class ParseTreeFolder():
 
         print('\n\n---------------------------------------------------------------------')
         print('data frame summary')
-        print('\nnumerical columns')
+        print('\nnumerical columns\n')
         for i in num_col:
             print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}, min is : {3:.2f}, max is : {4:.2f}'.format(i,np.mean(self.frame[i]),np.std(self.frame[i]),np.min(self.frame[i]),np.max(self.frame[i])))
 
@@ -631,7 +631,7 @@ class ParseTreeFolder():
         # import time
 
         self._summarize_df()
-        input('press enter to continue & save the file')
+        input('\n\npress enter to continue & save the file')
 
         print('\n\n---------------------------------------------------------------------')
         if self.file_or_folder== '1':
