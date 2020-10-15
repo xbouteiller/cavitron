@@ -613,11 +613,11 @@ class ParseTreeFolder():
         print('data frame summary')
         print('\nnumerical columns')
         for i in num_col:
-            print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}'.format(i,np.mean(self.frame[i]),np.std(self.frame[i])))
+            print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}, min is : {3:.2f}, max is : {4:.2f}'.format(i,np.mean(self.frame[i]),np.std(self.frame[i]),np.min(self.frame[i]),np.max(self.frame[i])))
 
         print('\ncategorical columns')
         for i in group_col+['Note']:
-            print('- for : {}, categories are : {}'.format(i,self.frame[i].unique().tolist()))
+            print('\n- for : {}, categories are : {}'.format(i,self.frame[i].unique().tolist()))
             print(self.frame[i].value_counts())
 
     def save_finaldf(self):
@@ -628,10 +628,10 @@ class ParseTreeFolder():
         import os
         from tkinter import Tk
         from tkinter.filedialog import asksaveasfilename
-        import time
+        # import time
 
         self._summarize_df()
-        time.sleep(5)
+        input('press enter to continue & save the file')
 
         print('\n\n---------------------------------------------------------------------')
         if self.file_or_folder== '1':
