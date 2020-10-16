@@ -2,13 +2,13 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.2               ---------------------')
+print('---------------                 V5.3               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
-group_col=['Sampling_location', 'Treatment', 'Operator']
+group_col=['Campaign_name', 'Sampling_location', 'Treatment', 'Operator']
 empty_col='Sample_ref_2'
 
 # python setup.py develop
@@ -120,7 +120,7 @@ class ParseTreeFolder():
         import re
         import os
         d=os.path.join(p, s)
-        
+
         return [os.path.join(d, f) for f in os.listdir(d) if\
                 f.endswith('.csv') and (re.search(r'CAVISOFT|cavisoft', pd.read_csv(os.path.join(d, f),sep=",",nrows=0).columns[0]) and\
                 re.search(r'^((?!append).)*$',f.lower()))]
@@ -289,7 +289,15 @@ class ParseTreeFolder():
                 print("Oops!  That was no valid number.  Try again...")
 
         for i in np.arange(0,nval):
+
             tobemodified = input('Which value do you want to change ? ')
+            while True:
+                if tobemodified in self.frame[self.i].unique().tolist():
+                    break
+                else:
+                    print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
+                    tobemodified = input('Which value do you want to change ? ')
+
             newvalue = input('What is the new value ? ')
             self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
             print('new values are {}'.format(self.frame[self.i].unique()))
@@ -344,6 +352,13 @@ class ParseTreeFolder():
 
         for i in np.arange(0,nval):
             tobemodified = input('Which row value do you want to erase ? ')
+            while True:
+                if tobemodified in self.frame[self.i].unique().tolist():
+                    break
+                else:
+                    print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
+                    tobemodified = input('Which row value do you want to erase ? ')
+
             self.frame=self.frame[self.frame[self.i]!=tobemodified]
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
@@ -359,7 +374,8 @@ class ParseTreeFolder():
         #     [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
         #     input('press any key to continue')
         if not all_cn:
-            print('\n ---------------------------------------------------------------------')
+            print('\n\n ---------------------------------------------------------------------')
+            print('checking numerical columns\n')
             [print('col {} is Numeric'.format(i)) if j else print('col {} is not Numeric'.format(i)) for i, j in zip(num_col, cn)]
 
             for i, j in zip(num_col, cn):
@@ -383,7 +399,8 @@ class ParseTreeFolder():
             all_cg, cg= self._check_group(_df = self.frame , _col = group_col)#[0]
             # cg = self._check_group(_df = self.frame , _col = group_col)[1]
             if not all_cg:
-                print('\n ---------------------------------------------------------------------')
+                print('\n\n ---------------------------------------------------------------------')
+                print('checking categorical columns\n')
                 [print('label of col {} is unique'.format(i)) if j else print('label of col {} is NOT unique'.format(i)) for i, j in zip(group_col, cg)]
 
                 for i, j in zip(group_col, cg):
@@ -591,6 +608,75 @@ class ParseTreeFolder():
                         change = False
 
 
+    def check_unicity(self):
+        print('\n ---------------------------------------------------------------------')
+        print('\nChecking unicity')
+        pb = []
+        for camp in self.frame['Campaign_name'].unique():
+            for loc in self.frame['Sampling_location'].unique():
+                for sp in self.frame['Species'].unique():
+                    for tr in self.frame['Treatment'].unique():
+                        for cav in self.frame['Sample_ref_2'].unique():
+                            nval = len(self.frame.loc[(self.frame['Campaign_name']==camp) & (self.frame['Sampling_location']==loc) & (self.frame['Species']==sp) & (self.frame['Treatment']==tr) & (self.frame['Sample_ref_2']==cav),'Sample_ref_1'].unique().tolist())
+                            # print(nval)
+                            if nval >1:
+                                pb.append([camp,loc,sp,tr,cav,nval])
+
+        self.frame['REP']=1
+
+
+        for n in pb:
+            cavit_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['Sample_ref_2']==n[4]),'Sample_ref_1'].unique().tolist()
+            tree_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['Sample_ref_2']==n[4]),'Sample_ref_2'].unique().tolist()
+            print('''
+                 ------------------
+                 description
+
+                 campaign: {}
+                 site: {}
+                 species: {}
+                 treament: {}
+                 sample ref 1 (cavit number) : {}
+                 sample ref 2 (tree number): {}
+                  '''.format(n[0],n[1],n[2],n[3],cavit_number, tree_number))
+
+            print('''
+                --------------------
+                Error sample ref 1 don't refer to an unique tree
+                What do you want to do ?
+
+                1: nothing, escape and continue
+                2: yes, change manually some individuals values
+                3: compute repetition numbers for each sample ref 1
+                ''')
+            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3'))
+
+            if wtd == '6':
+                pass
+
+            if wtd == '2':
+
+                for caval in cavit_number:
+                    while True:
+                        try:
+                            newvalue= int(input('What is the new identifiant for "Sample_ref_2" for individual {}: '.format(caval)))
+                            break
+                        except ValueError:
+                            print("Oops!  That was no valid number.  Try again...")
+                    self.frame.loc[self.frame['Sample_ref_1']==caval,'Sample_ref_2']=newvalue
+
+                print('new value in {} are {}'.format('Sample_ref_2', self.frame['Sample_ref_2'].unique()))
+                input('press any key to continue')
+
+            if wtd == '3':
+                repet = 1
+                for ca in cavit_number:
+                    self.frame.loc['sample ref 1]'==ca,'REP']=repet
+                    repet += 1
+
+                print('rep values for {} are {}'.format(cavit_number, self.frame.loc[[True if ca in cavit_number else False  for ca in self.frame.Sample_ref_1],'REP'].unique()))
+                input('press any key to continue')
+
 
     def append_values(self):
         '''
@@ -632,6 +718,7 @@ class ParseTreeFolder():
                 self.check_frame_empty()
                 self.inactive_indiv()
                 self.manual_change()
+                self.check_unicity()
                 li_all.append(self.frame)
                 #check integrity
             else:
