@@ -623,7 +623,7 @@ class ParseTreeFolder():
                                 pb.append([camp,loc,sp,tr,cav,nval])
 
         self.frame['REP']=1
-
+        # print(self.frame['REP'])
 
         for n in pb:
             cavit_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['Sample_ref_2']==n[4]),'Sample_ref_1'].unique().tolist()
@@ -671,7 +671,8 @@ class ParseTreeFolder():
             if wtd == '3':
                 repet = 1
                 for ca in cavit_number:
-                    self.frame.loc['sample ref 1]'==ca,'REP']=repet
+                    # print(self.frame.loc['sample ref 1'==ca,['REP']])
+                    self.frame.loc[self.frame['Sample_ref_1']==ca,['REP']]=repet
                     repet += 1
 
                 print('rep values for {} are {}'.format(cavit_number, self.frame.loc[[True if ca in cavit_number else False  for ca in self.frame.Sample_ref_1],'REP'].unique()))
