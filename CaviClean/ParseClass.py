@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.0               ---------------------')
+print('---------------                 V5.2               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -86,6 +86,15 @@ class ParseTreeFolder():
             folder = askdirectory(title='What is the root folder that you want to parse ?')
             self.path = folder.replace('/','\\')
             print('\n\n\nroot path is {}'.format(self.path))
+
+            print('''
+            which method do you want to use for detecting cavisoft files ?
+
+            1: Detect files named with number (e.g. 180.csv or 180.1.csv)
+            2: Detect string 'cavisoft' in the first row
+            ''')
+            self.method_choice = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+
         else:
             Tk().withdraw()
             file = askopenfilename(title='What is the file that you want to check ?')
@@ -106,6 +115,16 @@ class ParseTreeFolder():
         d=os.path.join(p, s)
         return [os.path.join(d, f) for f in os.listdir(d) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
 
+    def _detect_cavisoft(self, p, s):
+        import pandas as pd
+        import re
+        import os
+        d=os.path.join(p, s)
+        
+        return [os.path.join(d, f) for f in os.listdir(d) if\
+                f.endswith('.csv') and (re.search(r'CAVISOFT|cavisoft', pd.read_csv(os.path.join(d, f),sep=",",nrows=0).columns[0]) and\
+                re.search(r'^((?!append).)*$',f.lower()))]
+
     def parse_folder(self):
         '''
         parse the folder tree and store the full path to target file in a list
@@ -113,6 +132,7 @@ class ParseTreeFolder():
         import os
         import time
         import re
+        import pandas as pd
 
         if self.file_or_folder=='2':
             self.listOfFiles=[[self.path]]
@@ -125,22 +145,40 @@ class ParseTreeFolder():
             # for f in os.listdir(self.path):
             #     if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f):
             #         print(os.path.join(self.path, f))
+            if self.method_choice == '1':
+                try:
+                    file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
+                    self.listOfFiles.append(file_root)
+                    # print(file_root)
+                except:
+                    print('no file detected within root directory')
+                    pass
 
-            try:
-                file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if re.search(r'^\d+\.csv|\d+\.\d+\.csv',f)]
-                self.listOfFiles.append(file_root)
-                # print(file_root)
-            except:
-                print('no file detected within root directory')
-                pass
+                try:
+                    for pa, subdirs, files in os.walk(self.path):
+                        for s in subdirs:
+                            self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
+                except:
+                    print('no file detected within childs directory')
+                    pass
+            if self.method_choice == '2':
+                try:
+                    file_root = [os.path.join(self.path, f) for f in os.listdir(self.path) if\
+                    f.endswith('.csv') and (re.search(r'CAVISOFT|cavisoft', pd.read_csv(os.path.join(self.path, f),sep=",",nrows=0).columns[0]) and\
+                    re.search(r'^((?!append).)*$',f.lower()))]
+                    self.listOfFiles.append(file_root)
+                    # print(file_root)
+                except:
+                    print('no file detected within root directory')
+                    pass
 
-            try:
-                for pa, subdirs, files in os.walk(self.path):
-                    for s in subdirs:
-                        self.listOfFiles.append(self._listdir_fullpath(p=pa, s=s))
-            except:
-                print('no file detected within childs directory')
-                pass
+                try:
+                    for pa, subdirs, files in os.walk(self.path):
+                        for s in subdirs:
+                            self.listOfFiles.append(self._detect_cavisoft(p=pa, s=s))
+                except:
+                    print('no file detected within childs directory')
+                    pass
 
             # [print(len(i)) for i in self.listOfFiles]
             # [print("- find : {0} matching files\n".format(len(i))) for i in self.listOfFiles]
