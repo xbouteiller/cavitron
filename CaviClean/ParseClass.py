@@ -622,7 +622,12 @@ class ParseTreeFolder():
                             if nval >1:
                                 pb.append([camp,loc,sp,tr,cav,nval])
 
-        self.frame['REP']=1
+        if 'REP' not in self.frame.columns:
+            self.frame['REP']=1
+            print('REP column created')
+        else:
+            self.frame['REP']=self.frame['REP'].fillna(1)
+            print('empty REP column values filled with 1')
         # print(self.frame['REP'])
 
         for n in pb:
