@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.3               ---------------------')
+print('---------------                 V5.4               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -437,7 +437,7 @@ class ParseTreeFolder():
 
     def check_frame_empty(self):
         any_empty, empty = self._check_empty(_df = self.frame , _col= empty_col)
-
+        ae=0
         while any_empty:
             print('\n ---------------------------------------------------------------------')
             print('parsing list of files from : {}\n'.format(self.presentfile))
@@ -465,8 +465,9 @@ class ParseTreeFolder():
             if wtd == '4':
                 self._manual_empty()
                 any_empty = self._check_empty(_df = self.frame , _col= empty_col)[0]
-
-        print('\nExiting from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
+            ae+=1
+        if ae>0:
+            print('\nExiting from empty verification\nnew value in {} are {}'.format(empty_col, self.frame[empty_col].unique()))
 
 
     def _inactive_indiv(self):
@@ -622,12 +623,13 @@ class ParseTreeFolder():
                             if nval >1:
                                 pb.append([camp,loc,sp,tr,cav,nval])
 
-        if 'REP' not in self.frame.columns:
-            self.frame['REP']=1
-            print('REP column created')
-        else:
+        print('REP column already exists ? {}'.format('REP' in self.frame.columns))
+        if 'REP' in self.frame.columns:
             self.frame['REP']=self.frame['REP'].fillna(1)
             print('empty REP column values filled with 1')
+        else:
+            self.frame['REP']=1
+            print('REP column created')
         # print(self.frame['REP'])
 
         for n in pb:
@@ -651,8 +653,8 @@ class ParseTreeFolder():
                 What do you want to do ?
 
                 1: nothing, escape and continue
-                2: yes, change manually some individuals values
-                3: compute repetition numbers for each sample ref 1
+                2: change manually some individual values (sample ref 2)
+                3: automatically compute repetition numbers for each sample ref 1
                 ''')
             wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3'))
 
