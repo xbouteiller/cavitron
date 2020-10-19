@@ -615,16 +615,6 @@ class ParseTreeFolder():
     def check_unicity(self):
         print('\n ---------------------------------------------------------------------')
         print('\nChecking unicity')
-        pb = []
-        for camp in self.frame['Campaign_name'].unique():
-            for loc in self.frame['Sampling_location'].unique():
-                for sp in self.frame['Species'].unique():
-                    for tr in self.frame['Treatment'].unique():
-                        for cav in self.frame['Sample_ref_2'].unique():
-                            nval = len(self.frame.loc[(self.frame['Campaign_name']==camp) & (self.frame['Sampling_location']==loc) & (self.frame['Species']==sp) & (self.frame['Treatment']==tr) & (self.frame['Sample_ref_2']==cav),'Sample_ref_1'].unique().tolist())
-                            # print(nval)
-                            if nval >1:
-                                pb.append([camp,loc,sp,tr,cav,nval])
 
         print('REP column already exists ? {}'.format('REP' in self.frame.columns))
         if 'REP' in self.frame.columns:
@@ -633,11 +623,25 @@ class ParseTreeFolder():
         else:
             self.frame['REP']=1
             print('REP column created')
+
+        pb = []
+        for camp in self.frame['Campaign_name'].unique():
+            for loc in self.frame['Sampling_location'].unique():
+                for sp in self.frame['Species'].unique():
+                    for tr in self.frame['Treatment'].unique():
+                        for cav in self.frame['Sample_ref_2'].unique():
+                            for rep in self.frame['REP'].unique():
+                                nval = len(self.frame.loc[(self.frame['Campaign_name']==camp) & (self.frame['Sampling_location']==loc) & (self.frame['Species']==sp) & (self.frame['Treatment']==tr) & (self.frame['Sample_ref_2']==cav) & (self.frame['REP']==rep),'Sample_ref_1'].unique().tolist())
+                                # print(nval)
+                                if nval >1:
+                                    pb.append([camp,loc,sp,tr,rep,cav,nval])
+
+
         # print(self.frame['REP'])
 
         for n in pb:
-            cavit_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['Sample_ref_2']==n[4]),'Sample_ref_1'].unique().tolist()
-            tree_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['Sample_ref_2']==n[4]),'Sample_ref_2'].unique().tolist()
+            cavit_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['REP']==n[4]) & (self.frame['Sample_ref_2']==n[5]),'Sample_ref_1'].unique().tolist()
+            tree_number = self.frame.loc[(self.frame['Campaign_name']==n[0]) & (self.frame['Sampling_location']==n[1]) & (self.frame['Species']==n[2]) & (self.frame['Treatment']==n[3]) & (self.frame['REP']==n[4]) & (self.frame['Sample_ref_2']==n[5]),'Sample_ref_2'].unique().tolist()
             print('''
                  ------------------
                  description
@@ -646,9 +650,10 @@ class ParseTreeFolder():
                  site: {}
                  species: {}
                  treament: {}
+                 repetition: {}
                  sample ref 1 (cavit number) : {}
                  sample ref 2 (tree number): {}
-                  '''.format(n[0],n[1],n[2],n[3],cavit_number, tree_number))
+                  '''.format(n[0],n[1],n[2],n[3],n[4],cavit_number, tree_number))
 
             print('''
                 --------------------
