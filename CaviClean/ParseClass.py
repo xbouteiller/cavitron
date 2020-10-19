@@ -689,7 +689,7 @@ class ParseTreeFolder():
                 input('press any key to continue')
 
             if wtd == '4':
-                self._change_values()
+                self.manual_change()
 
     def append_values(self):
         '''
