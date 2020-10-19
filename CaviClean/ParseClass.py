@@ -286,7 +286,7 @@ class ParseTreeFolder():
 
         while True:
             try:
-                nval = int(input('how many values do you want to modify ? '))
+                nval = float(input('how many values do you want to modify ? '))
                 break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
@@ -347,7 +347,7 @@ class ParseTreeFolder():
         print('choose to do erase rows')
         while True:
             try:
-                nval = int(input('how many values do you want to erase ? '))
+                nval = float(input('how many values do you want to erase ? '))
                 break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
@@ -422,7 +422,7 @@ class ParseTreeFolder():
             if any(self.frame.loc[self.frame['Sample_ref_1']==man, empty_col].isna()):
                 while True:
                     try:
-                        newvalue= int(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
+                        newvalue= float(input('What is the identifiant for "ref number 2" for individual {}: '.format(man)))
                         break
                     except ValueError:
                         print("Oops!  That was no valid number.  Try again...")
@@ -476,7 +476,7 @@ class ParseTreeFolder():
     def _inactive_indiv(self):
         while True:
             try:
-                newvalue= int(input('What is the identifiant of the individual that you want to inactive ? '))
+                newvalue= float(input('What is the identifiant of the individual that you want to inactive ? '))
                 break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
@@ -488,7 +488,7 @@ class ParseTreeFolder():
                 print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
                 while True:
                     try:
-                        newvalue= int(input('What is the identifiant of the individual that you want to inactive ? '))
+                        newvalue= float(input('What is the identifiant of the individual that you want to inactive ? '))
                         break
                     except ValueError:
                         print("Oops!  That was no valid number.  Try again...")
@@ -565,7 +565,7 @@ class ParseTreeFolder():
         else:
             while True:
                 try:
-                    newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                    newvalue= float(input('What is the identifiant of the individual that you want to change ? '))
                     break
                 except ValueError:
                     print("Oops!  That was no valid number.  Try again...")
@@ -577,7 +577,7 @@ class ParseTreeFolder():
                     print("Oops! identifiant not existing choose one among : {}".format(self.frame['Sample_ref_1'].unique().tolist()))
                     while True:
                         try:
-                            newvalue= int(input('What is the identifiant of the individual that you want to change ? '))
+                            newvalue= float(input('What is the identifiant of the individual that you want to change ? '))
                             break
                         except ValueError:
                             print("Oops!  That was no valid number.  Try again...")
@@ -669,7 +669,7 @@ class ParseTreeFolder():
                 for caval in cavit_number:
                     while True:
                         try:
-                            newvalue= int(input('What is the new identifiant for "Sample_ref_2" for individual {}: '.format(caval)))
+                            newvalue= float(input('What is the new identifiant for "Sample_ref_2" for individual {}: '.format(caval)))
                             break
                         except ValueError:
                             print("Oops!  That was no valid number.  Try again...")
