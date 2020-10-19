@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.4               ---------------------')
+print('---------------                 V5.5               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -17,7 +17,7 @@ class ParseFile():
     import pandas as pd
     import numpy as np
 
-    def __init__(self, path, skipr=1):
+    def __init__(self, path, skipr=1, sepa= ",", encod = "utf-8"):
         '''
         initialization
         path of the file
@@ -30,9 +30,9 @@ class ParseFile():
         import pandas as pd
         import numpy as np
         try:
-            self.file = pd.read_csv(path, skiprows=skipr, sep = ",")
+            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
         except:
-            self.file = pd.read_csv(path, skiprows=skipr, sep = ";", encoding="latin")
+            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
 
     def desc_file(self):
         '''
@@ -720,7 +720,20 @@ class ParseTreeFolder():
                         skip=1
                     else:
                         skip=0
-                    df = ParseFile(path = elem, skipr=skip).clean_file()
+                    try:
+                        df = ParseFile(path = elem, skipr=skip).clean_file()
+                    except:
+                        encodi='latin'
+                        df = ParseFile(path = elem, skipr=skip, encod=encodi).clean_file()
+
+                    if df.shape[1] == 1:
+                        separ=';'
+                        try:
+                            df = ParseFile(path = elem, sepa=separ, skipr=skip).clean_file()
+                        except:
+                            encodi='latin'
+                            df = ParseFile(path = elem, skipr=skip, sepa=separ, encod=encodi).clean_file()
+
                     # print(df)
                     li.append(df)
 
@@ -769,7 +782,41 @@ class ParseTreeFolder():
         # import time
 
         self._summarize_df()
-        input('\n\npress enter to continue & save the file')
+        print('''
+        --------------------
+        Last step
+        Do you want to save the data frame or to restart the process ?
+
+        1. save
+        2. restart
+        ''')
+
+        finchoi=self._get_valid_input('What is your choice ? Choose one of : ', ('1','2'))
+
+        if finchoi == '1':
+            pass
+        else:
+            while finchoi == '2':
+                self.frame = self.final_frame
+                self.check_frame_num()
+                self.check_frame_group()
+                self.check_frame_empty()
+                self.inactive_indiv()
+                self.manual_change()
+                self.check_unicity()
+                self.final_frame = self.frame
+
+                self._summarize_df()
+                print('''
+                --------------------
+                Last step
+                Do you want to save the data frame or to restart the process ?
+
+                1. save
+                2. restart
+                ''')
+
+                finchoi=self._get_valid_input('What is your choice ? Choose one of : ', ('1','2'))
 
         print('\n\n---------------------------------------------------------------------')
         if self.file_or_folder== '1':
@@ -798,5 +845,5 @@ class ParseTreeFolder():
             FileSaveName = input('enter final file name : ') or 'DefaultTable'
             FileSaveName += '.csv'
 
-        self.final_frame.to_csv(FileSaveName,index=False, header=True)
+        self.final_frame.to_csv(FileSaveName,index=False, header=True, sep=";")
         print('saved file {}\n'.format(FileSaveName))
