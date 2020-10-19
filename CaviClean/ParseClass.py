@@ -29,7 +29,10 @@ class ParseFile():
 
         import pandas as pd
         import numpy as np
-        self.file = pd.read_csv(path, skiprows=skipr, sep = ",")
+        try:
+            self.file = pd.read_csv(path, skiprows=skipr, sep = ",")
+        except:
+            self.file = pd.read_csv(path, skiprows=skipr, sep = ";", encoding="latin")
 
     def desc_file(self):
         '''
@@ -524,9 +527,9 @@ class ParseTreeFolder():
 
     def _change_values(self):
 
-        num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
-        group_col=['Sampling_location', 'Treatment', 'Operator']
-        empty_col='Sample_ref_2'
+        # num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
+        # group_col=['Sampling_location', 'Treatment', 'Operator']
+        # empty_col='Sample_ref_2'
 
 
         print('''
@@ -655,14 +658,14 @@ class ParseTreeFolder():
                 1: nothing, escape and continue
                 2: change manually some individual values (sample ref 2)
                 3: automatically compute repetition numbers for each sample ref 1
+                4: manual change (if you want to change other column value e.g treatment)
                 ''')
-            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3'))
+            wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3', '4'))
 
             if wtd == '6':
                 pass
 
             if wtd == '2':
-
                 for caval in cavit_number:
                     while True:
                         try:
@@ -685,6 +688,8 @@ class ParseTreeFolder():
                 print('rep values for {} are {}'.format(cavit_number, self.frame.loc[[True if ca in cavit_number else False  for ca in self.frame.Sample_ref_1],'REP'].unique()))
                 input('press any key to continue')
 
+            if wtd == '4':
+                self._change_values()
 
     def append_values(self):
         '''
