@@ -9,6 +9,7 @@ Download last version from github
 
 >
 > git clone https://github.com/xbouteiller/cavitron.git
+>
 > python setup.py develop
 >
 
