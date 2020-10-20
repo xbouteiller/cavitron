@@ -850,5 +850,5 @@ class ParseTreeFolder():
             FileSaveName = input('enter final file name : ') or 'DefaultTable'
             FileSaveName += '.csv'
 
-        self.final_frame.to_csv(FileSaveName,index=False, header=True, sep=";")
+        self.final_frame.to_csv(FileSaveName,index=False, header=True) #which sep ?
         print('saved file {}\n'.format(FileSaveName))
