@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.5               ---------------------')
+print('---------------                 V5.7               ---------------------')
 print('----------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
@@ -70,6 +70,7 @@ class ParseFile():
 class ParseTreeFolder():
 
     def __init__(self):
+        import time
         # super().__init__()
         from tkinter import Tk
         from tkinter.filedialog import askopenfilename, askdirectory
@@ -81,8 +82,9 @@ class ParseTreeFolder():
 
         1: Parse a folder
         2: Check individual file
+        3: concatenate 2 files
         ''')
-        self.file_or_folder = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+        self.file_or_folder = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2', '3'))
 
         if self.file_or_folder== '1':
             Tk().withdraw()
@@ -98,11 +100,28 @@ class ParseTreeFolder():
             ''')
             self.method_choice = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
 
-        else:
+        if self.file_or_folder== '2':
             Tk().withdraw()
             file = askopenfilename(title='What is the file that you want to check ?')
             self.path = file.replace('/','\\')
             print('\n\n\nfile path is {}'.format(self.path))
+
+        if self.file_or_folder== '3':
+            Tk().withdraw()
+            print('\nWhat is the first file that you want to concat ?')
+            time.sleep(1)
+            file = askopenfilename(title='What is the first file that you want to concat ?')
+            self.path = file.replace('/','\\')
+
+            print('\nWhat is the second file that you want to concat to the first ?')
+            time.sleep(1)
+            file2 = askopenfilename(title='What is the second file that you want to concat ?')
+            self.path2 = file2.replace('/','\\')
+
+            print('\n\n\nfile 1 path is {}'.format(self.path))
+            print('\nfile 2 path is {}'.format(self.path2))
+
+
 
         self.choices = {
         "1": self.do_nothing,
@@ -139,8 +158,11 @@ class ParseTreeFolder():
 
         if self.file_or_folder=='2':
             self.listOfFiles=[[self.path]]
-            # print(self.listOfFiles)
-        else:
+
+        if self.file_or_folder=='3':
+            self.listOfFiles=[[self.path, self.path2]]
+
+        if self.file_or_folder=='1':
             file_root=[]
             self.listOfFiles = []
 
@@ -359,13 +381,43 @@ class ParseTreeFolder():
                 if tobemodified in self.frame[self.i].unique().tolist():
                     break
                 else:
-                    print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
+                    print("Oops! values not existing in {} choose one among : {}".format(self.i, self.frame[self.i].unique().tolist()))
                     tobemodified = input('Which row value do you want to erase ? ')
 
             self.frame=self.frame[self.frame[self.i]!=tobemodified]
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
 
+    def _clean_plc(self):
+        import pandas as pd
+        # print(self.frame['PLC'].str.isnumeric().values)
+        # print(self.frame.shape)
+        # self.frame=self.frame[self.frame['PLC'].str.isnumeric().values]
+        # self.frame['PLC']=pd.to_numeric(self.frame['PLC'].values)
+        # print(self.frame.shape)
+        # self.frame['PLC']<=100
+        # print(self.frame.shape)
+        # print(self.frame['PLC'])
+        # print(self.frame['PLC'].str.isdigit().values)
+        # print(pd.to_numeric(self.frame['PLC'], errors='coerce').notnull())
+        # print(pd.to_numeric(self.frame['PLC'], errors='coerce').notnull().shape)
+        try:
+            n0r=self.frame.shape[0]
+            self.frame=self.frame[pd.to_numeric(self.frame['PLC'], errors='coerce').notnull()]
+            self.frame['PLC']=pd.to_numeric(self.frame['PLC'].values)
+            n1r=self.frame.shape[0]
+            print('\n\nremoving non numeric PLC, {} rows removed'.format(n1r-n0r))
+            self.frame=self.frame[self.frame['PLC']<=100]
+            n2r=self.frame.shape[0]
+            print('removing PLC values higher than 100, {} rows removed'.format(n2r-n1r))
+        except:
+            print('an exception occured when trying to clean PLC values')
+
+    def clean_plc(self):
+            import pandas as pd
+            print('\n ---------------------------------------------------------------------')
+            print('Cleaning PLC values')
+            self._clean_plc()
 
     def check_frame_num(self):
         import pandas as pd
@@ -704,9 +756,8 @@ class ParseTreeFolder():
         import numpy as np
         import pandas as pd
 
+
         dimfolder = len(self.listOfFiles)
-
-
         li_all = []
         for d in np.arange(0,dimfolder):
             print('\n\n\n---------------------------------------------------------------------')
@@ -749,6 +800,7 @@ class ParseTreeFolder():
                 self.check_frame_empty()
                 self.inactive_indiv()
                 self.manual_change()
+                self.clean_plc()
                 self.check_unicity()
                 li_all.append(self.frame)
                 #check integrity
@@ -793,7 +845,7 @@ class ParseTreeFolder():
         Do you want to save the data frame or to restart the process ?
 
         1. save
-        2. restart
+        2. restart verifs
         ''')
 
         finchoi=self._get_valid_input('What is your choice ? Choose one of : ', ('1','2'))
@@ -808,6 +860,7 @@ class ParseTreeFolder():
                 self.check_frame_empty()
                 self.inactive_indiv()
                 self.manual_change()
+                self.clean_plc()
                 self.check_unicity()
                 self.final_frame = self.frame
 
@@ -830,7 +883,7 @@ class ParseTreeFolder():
             idir=self.path
             ifile=os.path.basename(os.path.normpath(self.path))
 
-        if self.file_or_folder== '2':
+        if self.file_or_folder== '2' or self.file_or_folder== '3':
             print('initialdir {} '.format(os.path.dirname(self.path)))
             print('initialfile {} '.format(os.path.basename(self.path)))
             idir=os.path.dirname(self.path)
@@ -850,5 +903,5 @@ class ParseTreeFolder():
             FileSaveName = input('enter final file name : ') or 'DefaultTable'
             FileSaveName += '.csv'
 
-        self.final_frame.to_csv(FileSaveName,index=False, header=True) #which sep ?
+        self.final_frame.to_csv(FileSaveName,index=False, header=True, sep=';') #which sep ?
         print('saved file {}\n'.format(FileSaveName))
