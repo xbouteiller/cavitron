@@ -50,4 +50,4 @@ In the exec folder:
 	- if a problem is detected several options are available (do nothing, automatically compute repetition number, change a column value, inactive individual)
 	
 
-** sample ref 1 - cavitron number - can never be changed by the program **
+**sample ref 1 - cavitron number - can never be changed by the program**
