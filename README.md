@@ -2,7 +2,7 @@
 
 Python package CaviClean for cleaning and agregating cavit files from separate folders
 
-<br/><br/>
+
 <br/><br/>
 
 ## How to install ?
@@ -15,7 +15,7 @@ Download the last version from github
 > python setup.py develop
 >
 
-<br/><br/>
+
 <br/><br/>
 
 ## How to use ?
@@ -26,24 +26,24 @@ In the **exec folder**:
 - should be located in the same folder than caviclean-python-exec.py
 
 <br/><br/>
-<br/><br/>
+
 
 ## What are the possibilities ?
 
 3 choices are offered at the beginning of the program
-<br/><br/>
-#### Parse a folder and subfolders
+
+### Parse a folder and subfolders
 - automatically detect raw files from cavitron within each subfolder
 - check the coherence of files within each subfolder
 - finally concatenate all files
-<br/><br/>
-#### Check and correct an individual file already made by the program
+
+### Check and correct an individual file already made by the program
 - useful if we want to inactive individuals, change some columns values (e.g. treatement) 
-<br/><br/>
-#### Concatenate 2 files
+
+### Concatenate 2 files
 - typically if we want to add a new population to the database
 	
-<br/><br/>
+
 <br/><br/>
 	
 ## What do the program ?
@@ -57,7 +57,7 @@ In the **exec folder**:
 	- based on the comination of several columns (campaign name, species, treatment, repetition, tree number - sample ref 2 -)
 	- if a problem is detected several options are available (do nothing, automatically compute repetition number, change a column value, inactive individual)
 	
-<br/><br/>
+
 <br/><br/>
 
 ## Important 
