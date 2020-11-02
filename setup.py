@@ -3,7 +3,7 @@ from setuptools import setup
 
 # Create proper setup to be used by pip
 setup(name='CaviClean',
-      version='5.7',
+      version='5.8',
       description='Convert cavit files',
       author='Xavier Bouteiller',
       author_email='xavier.bouteiller@u-bordeaux.fr',

@@ -2,8 +2,8 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.7               ---------------------')
-print('----------------                                   ---------------------')
+print('---------------                 V5.8               ---------------------')
+print('---------------                                   ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(2)
 
@@ -89,7 +89,7 @@ class ParseTreeFolder():
         if self.file_or_folder== '1':
             Tk().withdraw()
             folder = askdirectory(title='What is the root folder that you want to parse ?')
-            self.path = folder.replace('/','\\')
+            self.path = folder.replace('/','/')
             print('\n\n\nroot path is {}'.format(self.path))
 
             print('''
@@ -103,7 +103,7 @@ class ParseTreeFolder():
         if self.file_or_folder== '2':
             Tk().withdraw()
             file = askopenfilename(title='What is the file that you want to check ?')
-            self.path = file.replace('/','\\')
+            self.path = file.replace('/','/')
             print('\n\n\nfile path is {}'.format(self.path))
 
         if self.file_or_folder== '3':
@@ -111,12 +111,12 @@ class ParseTreeFolder():
             print('\nWhat is the first file that you want to concat ?')
             time.sleep(1)
             file = askopenfilename(title='What is the first file that you want to concat ?')
-            self.path = file.replace('/','\\')
+            self.path = file.replace('/','/')
 
             print('\nWhat is the second file that you want to concat to the first ?')
             time.sleep(1)
             file2 = askopenfilename(title='What is the second file that you want to concat ?')
-            self.path2 = file2.replace('/','\\')
+            self.path2 = file2.replace('/','/')
 
             print('\n\n\nfile 1 path is {}'.format(self.path))
             print('\nfile 2 path is {}'.format(self.path2))
