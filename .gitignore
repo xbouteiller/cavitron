@@ -105,11 +105,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-myflask
-mycavit
-CaviClean.egg-info
-CavitClean.egg-info
-__pycache__
+myflask/
+mycavit/
+CaviClean.egg-info/
+CavitClean.egg-info/
+__pycache__/
 # Spyder project settings
 .spyderproject
 .spyproject
