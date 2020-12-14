@@ -2,10 +2,10 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.8               ---------------------')
+print('---------------                 V5.9               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
-time.sleep(2)
+time.sleep(1)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Campaign_name', 'Sampling_location', 'Treatment', 'Operator']
@@ -29,10 +29,16 @@ class ParseFile():
 
         import pandas as pd
         import numpy as np
+        import os 
+        
         try:
-            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
+            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa)
         except:
-            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
+            try:
+                self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
+            except:
+                print('failed : {}'.format(os.path.basename(path)))
+                pass
 
     def desc_file(self):
         '''
@@ -54,16 +60,19 @@ class ParseFile():
         import pandas as pd
         import numpy as np
 
-        #drop full na
-        self.file = self.file.dropna(axis = 0, how = 'all')
+        try:
+            #drop full na
+            self.file = self.file.dropna(axis = 0, how = 'all')
 
-        # convert to numeric if possible
-        self.file = self.file.apply(lambda x: pd.to_numeric(x, errors ="ignore"))
+            # convert to numeric if possible
+            self.file = self.file.apply(lambda x: pd.to_numeric(x, errors ="ignore"))
 
-        # lower strings
-        self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
+            # lower strings
+            self.file = self.file.applymap(lambda s:s.lower() if (isinstance(s, str) and s!='None')  else s)
 
-        return self.file
+            return self.file
+        except:
+            pass
 
 
 
