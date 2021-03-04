@@ -33,7 +33,7 @@ or see step 1 in the program flow section below for more information.
 
 ## What are the possibilities ?
 
-3 choices are offered at the beginning of the program
+3 choices are offered when the program starts
 
 <img src="img/2021-03-04_12-16_1.png" width="85%" height="85%">
 
