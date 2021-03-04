@@ -94,7 +94,7 @@ The program works on raw files edited by the cavisoft program. The name of the c
 4. The program looks for errors or inconsistency within several columns. If a potential problem is detected, the program propose some action in order to fix it.
 <img src="img/2021-03-02_12-45_1.png" width="75%" height="75%">
 
-For example here, the program detects 3 differents values for the treatment column : adult, young and empty values (nan). It seems that someone forgot to fill the column for one individual, so it is possible to fix the problem by modifying empty value with a new value (choice 2) or to erase the empy rows (choice 4). Other typos (e.g. on adult or young) could have also been fixed here by selecting more values to modify.
+For example here, the program has detected 3 differents values for the treatment column : adult, young and empty values (nan). It seems that someone forgot to fill the column for at least one individual, so it is possible to fix the problem by modifying empty value with a new value (choice 2) or to erase the empy rows (choice 4). Independant choice of action can be made for each individual containing nan. Other typos (e.g. on adult or young) could have also been fixed in this step by selecting more values to modify.
 <img src="img/2021-03-04_12-22.png" width="75%" height="75%">
 
 #### Step 5
