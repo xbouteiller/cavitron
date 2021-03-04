@@ -1,6 +1,6 @@
 # CaviClean
 
-Python package CaviClean for cleaning and agregating cavit files from separate folders
+Python package CaviClean for cleaning and agregating cavit files from separated folders
 
 
 <br/><br/>
@@ -31,6 +31,9 @@ In the **exec folder**:
 ## What are the possibilities ?
 
 3 choices are offered at the beginning of the program
+
+![image](img/2021-03-02_12-42.png)
+
 
 ### Parse a folder and subfolders
 - automatically detect raw files from cavitron within each subfolder
