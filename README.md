@@ -32,7 +32,7 @@ In the **exec folder**:
 
 3 choices are offered at the beginning of the program
 
-![image](img/2021-03-02_12-42.png)
+![image](img/2021-03-02_12-42.png){:height="50%" width="50%"}
 
 
 ### Parse a folder and subfolders
