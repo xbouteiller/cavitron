@@ -34,16 +34,16 @@ In the **exec folder**:
 
 <img src="img/2021-03-02_12-42.png" width="85%" height="85%">
 
-### Parse a folder and subfolders
+### 1. Parse a folder and subfolders
 - automatically detect raw files from cavitron within each subfolder
 - check the coherence of files within each subfolder
 - finally concatenate all files
 
-### Check and correct an individual file already made by the program
+### 2. Check and correct an individual file already made by the program
 - useful if we want to inactive individuals, change some columns values (e.g. treatement) 
 
-### Concatenate 2 files
-- typically if we want to add a new population to the database
+### 3. Concatenate 2 files
+- typically if we want to add a new population to the already made database
 	
 
 <br/><br/>

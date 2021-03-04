@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                 V5.9               ---------------------')
+print('---------------                V5.10               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -326,14 +326,18 @@ class ParseTreeFolder():
 
             tobemodified = input('Which value do you want to change ? ')
             while True:
-                if tobemodified in self.frame[self.i].unique().tolist():
+                if tobemodified in self.frame[self.i].unique().tolist() + ['nan']:
                     break
                 else:
                     print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
-                    tobemodified = input('Which value do you want to change ? ')
+                    tobemodified = input('Which value do you want to change ? enter nan for empty values')
 
             newvalue = input('What is the new value ? ')
-            self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
+
+            if tobemodified == 'nan':                
+                self.frame.loc[self.frame[self.i].isna(),self.i] = newvalue
+            else:
+                self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
 
@@ -387,13 +391,17 @@ class ParseTreeFolder():
         for i in np.arange(0,nval):
             tobemodified = input('Which row value do you want to erase ? ')
             while True:
-                if tobemodified in self.frame[self.i].unique().tolist():
+                if tobemodified in self.frame[self.i].unique().tolist() + ['nan']:
                     break
                 else:
                     print("Oops! values not existing in {} choose one among : {}".format(self.i, self.frame[self.i].unique().tolist()))
-                    tobemodified = input('Which row value do you want to erase ? ')
+                    tobemodified = input('Which row value do you want to erase ? enter nan for empty values')
 
-            self.frame=self.frame[self.frame[self.i]!=tobemodified]
+            if tobemodified == 'nan':                
+                self.frame=self.frame[self.frame[self.i].notna()]
+            else:
+                self.frame=self.frame[self.frame[self.i]!=tobemodified]
+
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
 
