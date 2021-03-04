@@ -2,6 +2,7 @@
 
 Python package CaviClean for cleaning and agregating cavit files from separated folders
 
+Current version is: **5.11**
 
 <br/><br/>
 
