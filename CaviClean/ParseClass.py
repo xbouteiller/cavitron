@@ -330,7 +330,7 @@ class ParseTreeFolder():
                     break
                 else:
                     print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
-                    tobemodified = input('Which value do you want to change ? enter nan for empty values')
+                    tobemodified = input('Which value do you want to change ? enter nan for empty values. ')
 
             newvalue = input('What is the new value ? ')
 
@@ -395,10 +395,10 @@ class ParseTreeFolder():
                     break
                 else:
                     print("Oops! values not existing in {} choose one among : {}".format(self.i, self.frame[self.i].unique().tolist()))
-                    tobemodified = input('Which row value do you want to erase ? enter nan for empty values')
+                    tobemodified = input('Which row value do you want to erase ? enter nan for empty values. ')
 
             if tobemodified == 'nan':                
-                self.frame=self.frame[self.frame[self.i].notna()]
+                self.frame=self.frame[~self.frame[self.i].isna()]
             else:
                 self.frame=self.frame[self.frame[self.i]!=tobemodified]
 
