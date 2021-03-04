@@ -32,8 +32,8 @@ In the **exec folder**:
 
 3 choices are offered at the beginning of the program
 
-![image](img/2021-03-02_12-42.png){:height="50%" width="50%"}
-
+![image](img/2021-03-02_12-42.png)
+<img src="img/2021-03-02_12-42.png" width="100" height="100">
 
 ### Parse a folder and subfolders
 - automatically detect raw files from cavitron within each subfolder
