@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.10               ---------------------')
+print('---------------                V5.11               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -332,11 +332,27 @@ class ParseTreeFolder():
                     print("Oops! identifiant not existing choose one among : {}".format(self.frame[self.i].unique().tolist()))
                     tobemodified = input('Which value do you want to change ? enter nan for empty values. ')
 
-            newvalue = input('What is the new value ? ')
+            #newvalue = input('What is the new value ? ')
 
-            if tobemodified == 'nan':                
-                self.frame.loc[self.frame[self.i].isna(),self.i] = newvalue
+            if tobemodified == 'nan':
+                for indiv in self.frame.loc[self.frame[self.i].isna(), "Sample_ref_1"].unique().tolist():
+                    print('''
+                        --------------------
+                    for indiv {} with missing values\n
+                    Do you want to:
+                    -1: skip
+                    -2: fill the rows
+                        '''.format(indiv))
+                    wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+                    if wtd == '2':
+                        newvalue = input('What is the new value ? ')
+                        self.frame.loc[self.frame[self.i].isna() & (self.frame["Sample_ref_1"] == indiv),self.i] = newvalue
+                    if wtd == '1':
+                        print('{} passed'.format(indiv))
+                        pass              
+                    #self.frame.loc[self.frame[self.i].isna(),self.i] = newvalueself.frame.loc[self.frame[self.i].isna(),self.i] = newvalue
             else:
+                newvalue = input('What is the new value ? ')
                 self.frame.loc[self.frame[self.i]==tobemodified,self.i] = newvalue
             print('new values are {}'.format(self.frame[self.i].unique()))
             input('press any key to continue')
@@ -397,8 +413,21 @@ class ParseTreeFolder():
                     print("Oops! values not existing in {} choose one among : {}".format(self.i, self.frame[self.i].unique().tolist()))
                     tobemodified = input('Which row value do you want to erase ? enter nan for empty values. ')
 
-            if tobemodified == 'nan':                
-                self.frame=self.frame[~self.frame[self.i].isna()]
+            if tobemodified == 'nan':
+                for indiv in self.frame.loc[self.frame[self.i].isna(), "Sample_ref_1"].unique().tolist():
+                    print('''
+                    --------------------
+                   for indiv {} with missing values\n
+                   Do you want to:
+                   -1: skip
+                   -2: erase the rows
+                    '''.format(indiv))
+                    wtd = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+                    if wtd == '2':
+                        self.frame=self.frame[(~self.frame[self.i].isna()) | (self.frame["Sample_ref_1"] != indiv)]
+                    if wtd == '1':
+                        print('{} passed'.format(indiv))
+                        pass
             else:
                 self.frame=self.frame[self.frame[self.i]!=tobemodified]
 
