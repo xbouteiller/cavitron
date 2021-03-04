@@ -26,7 +26,7 @@ In the **exec folder**:
 - double clic on : **launch.bat**
 - should be located in the same folder than caviclean-python-exec.py
 
-or see step 1 in the program flow for more information.
+or see step 1 in the program flow section below for more information.
 
 <br/><br/>
 
