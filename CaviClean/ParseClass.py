@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.11               ---------------------')
+print('---------------                V5.12               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -722,6 +722,19 @@ class ParseTreeFolder():
             self.frame['REP']=1
             print('REP column created')
 
+        # Remove 'yes'
+        # Drop duplicates
+        # check unicity of cavit number
+        print('\n ----------------------------')
+        nrow1 = self.frame.shape[0]
+        print('Removing duplicated rows')
+        self.frame.drop_duplicates(inplace = True)
+        nrow2 = self.frame.shape[0]
+
+        print('{} rows removed\n'.format(nrow1 - nrow2))
+        
+
+        # one tree == one cavit number
         pb = []
         for camp in self.frame['Campaign_name'].unique():
             for loc in self.frame['Sampling_location'].unique():

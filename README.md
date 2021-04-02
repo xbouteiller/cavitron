@@ -2,9 +2,9 @@
 
 CaviClean is a command line software made with Python for cleaning and agregating cavit files from separated folders
 
-Current version is: **5.11**
+Current version is: **5.12**
 
-<br/><br/>
+<br></br>
 
 ## How to install ?
 
@@ -68,7 +68,7 @@ or see step 1 in the program flow section below for more information.
 
 ## Program flow
 
-Detailled flow of the method 1, other methods are very similar but are useful to check an alrealdy created file or to merge two cavitron files.
+Detailled flow for the method 1, other methods are very similar but are useful to check an alrealdy created file or to merge two cavitron files.
 
 ### 1. Parse a folder and subfolders
 
