@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.12               ---------------------')
+print('---------------                V5.13              ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -742,7 +742,9 @@ class ParseTreeFolder():
                     for tr in self.frame['Treatment'].unique():
                         for cav in self.frame['Sample_ref_2'].unique():
                             for rep in self.frame['REP'].unique():
-                                nval = len(self.frame.loc[(self.frame['Campaign_name']==camp) & (self.frame['Sampling_location']==loc) & (self.frame['Species']==sp) & (self.frame['Treatment']==tr) & (self.frame['Sample_ref_2']==cav) & (self.frame['REP']==rep),'Sample_ref_1'].unique().tolist())
+                                nval = len(self.frame.loc[(self.frame['Campaign_name']==camp) & (self.frame['Sampling_location']==loc) & \
+                                     (self.frame['Species']==sp) & (self.frame['Treatment']==tr) & (self.frame['Sample_ref_2']==cav) & \
+                                         (self.frame['REP']==rep) & (self.frame['Note']!='yes'),'Sample_ref_1'].unique().tolist())
                                 # print(nval)
                                 if nval >1:
                                     pb.append([camp,loc,sp,tr,rep,cav,nval])
