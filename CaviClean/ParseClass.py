@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.13              ---------------------')
+print('---------------                V5.14              ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -833,10 +833,14 @@ class ParseTreeFolder():
             if self.presentfile != 'No file':
                 for elem in self.listOfFiles[d]:
                     # print(elem)
-                    if self.file_or_folder== '1':
-                        skip=1
+                    if self.file_or_folder=='1':
+                        if self.method_choice == '2':
+                            skip=1
+                        else:
+                            skip=0
                     else:
-                        skip=0
+                        skip = 0
+
                     try:
                         df = ParseFile(path = elem, skipr=skip).clean_file()
                     except:
