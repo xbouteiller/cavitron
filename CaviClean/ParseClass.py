@@ -2,7 +2,7 @@ import time
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.14              ---------------------')
+print('---------------                V5.15              ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -10,6 +10,7 @@ time.sleep(1)
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
 group_col=['Campaign_name', 'Sampling_location', 'Treatment', 'Operator']
 empty_col='Sample_ref_2'
+date_col = 'Date_time'
 
 # python setup.py develop
 
@@ -709,6 +710,45 @@ class ParseTreeFolder():
                     if exit == 'exit' or exit == 'e':
                         change = False
 
+    
+    def _remove_duplicates(self):
+         # Remove 'yes'
+        # Drop duplicates
+        # check unicity of cavit number
+        print('\n----------------------------')
+        nrow1 = self.frame.shape[0]
+        print('Removing duplicated rows')
+        self.frame.drop_duplicates(inplace = True)
+        nrow2 = self.frame.shape[0]
+        print('{} rows removed\n'.format(nrow1 - nrow2))
+
+    def _remove_duplicates_ff(self):
+            # Remove 'yes'
+            # Drop duplicates
+            # check unicity of cavit number
+            print('\n----------------------------')
+            nrow1 = self.final_frame.shape[0]
+            print('Removing duplicated rows')
+            self.final_frame.drop_duplicates(inplace = True)
+            nrow2 = self.final_frame.shape[0]
+            print('{} rows removed\n'.format(nrow1 - nrow2))
+
+    def _convert_date(self):
+        import pandas as pd
+        import numpy as np
+
+        # print(self.final_frame[date_col])
+
+        # temp_df = self.final_frame.copy()
+        # temp_df.Date_time = pd.to_datetime(temp_df.Date_time)
+        # self.final_frame = temp_df.copy()  
+
+        self.final_frame[date_col] = pd.to_datetime(self.final_frame[date_col])
+
+        # print(self.final_frame[date_col])
+        print('\n----------------------------')
+        print('Date converted')
+
 
     def check_unicity(self):
         print('\n ---------------------------------------------------------------------')
@@ -722,16 +762,7 @@ class ParseTreeFolder():
             self.frame['REP']=1
             print('REP column created')
 
-        # Remove 'yes'
-        # Drop duplicates
-        # check unicity of cavit number
-        print('\n ----------------------------')
-        nrow1 = self.frame.shape[0]
-        print('Removing duplicated rows')
-        self.frame.drop_duplicates(inplace = True)
-        nrow2 = self.frame.shape[0]
-
-        print('{} rows removed\n'.format(nrow1 - nrow2))
+       
         
 
         # one tree == one cavit number
@@ -866,6 +897,7 @@ class ParseTreeFolder():
                 self.inactive_indiv()
                 self.manual_change()
                 self.clean_plc()
+                self._remove_duplicates()
                 self.check_unicity()
                 li_all.append(self.frame)
                 #check integrity
@@ -874,6 +906,8 @@ class ParseTreeFolder():
                 pass
 
         self.final_frame = pd.concat(li_all, axis=0, ignore_index=True, sort=False)
+        self._convert_date()
+        self._remove_duplicates_ff()        
         print('shape of final frame is {}'.format(self.final_frame.shape))
 
         return self.final_frame
@@ -919,16 +953,19 @@ class ParseTreeFolder():
             pass
         else:
             while finchoi == '2':
-                self.frame = self.final_frame
+                self.frame = self.final_frame.copy()
                 self.check_frame_num()
                 self.check_frame_group()
                 self.check_frame_empty()
                 self.inactive_indiv()
                 self.manual_change()
                 self.clean_plc()
+                self._remove_duplicates()
                 self.check_unicity()
-                self.final_frame = self.frame
-
+                self.final_frame = self.frame.copy()
+                
+                self._convert_date()
+                self._remove_duplicates_ff()
                 self._summarize_df()
                 print('''
                 --------------------
