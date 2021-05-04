@@ -1,14 +1,16 @@
 import time
+import os
+import re
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V5.15              ---------------------')
+print('---------------                V6.00               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
 
 num_col = ['PLC','Meas_cavispeed_rpm','Pressure_Mpa']
-group_col=['Campaign_name', 'Sampling_location', 'Treatment', 'Operator']
+group_col=['Campaign_name', 'Sampling_location', 'Treatment', 'Operator', 'Comment']
 empty_col='Sample_ref_2'
 date_col = 'Date_time'
 
@@ -135,10 +137,9 @@ class ParseTreeFolder():
 
         self.choices = {
         "1": self.do_nothing,
-        "2": self.modify,
-        "3": self.extract_strings,
-        "4": self.erase,
-        "5": self.extract_strings_and_nums
+        "2": self.modify,       
+        "3": self.erase
+
         }
 
     def _listdir_fullpath(self, p, s):
@@ -289,10 +290,9 @@ class ParseTreeFolder():
         List of actions
 
         1. do nothing
-        2. modify
-        3. extract strings
-        4. erase rows
-        5. extract strings and numbers
+        2. modify        
+        3. erase rows
+
         """)
 
     def run(self):
@@ -729,7 +729,8 @@ class ParseTreeFolder():
             print('\n----------------------------')
             nrow1 = self.final_frame.shape[0]
             print('Removing duplicated rows')
-            self.final_frame.drop_duplicates(inplace = True)
+            self.final_frame.drop_duplicates(subset = num_col + group_col + [empty_col,date_col, 'REP' ],
+                                            inplace = True)
             nrow2 = self.final_frame.shape[0]
             print('{} rows removed\n'.format(nrow1 - nrow2))
 
@@ -840,6 +841,53 @@ class ParseTreeFolder():
             if wtd == '4':
                 self.manual_change()
 
+
+
+
+    def _evaluate_file(self, elem, skip):
+            try:
+                dffile = ParseFile(path = elem, skipr=skip).clean_file()
+            except:
+                encodi='latin'
+                dffile = ParseFile(path = elem, skipr=skip, encod=encodi).clean_file()
+                
+            if dffile.shape[1] == 1:                
+                separ=';'
+                try:
+                    dffile = ParseFile(path = elem, sepa=separ, skipr=skip).clean_file()
+                except:
+                    encodi='latin'
+                    dffile = ParseFile(path = elem, skipr=skip, sepa=separ, encod=encodi).clean_file()
+
+            # print('1 ', dffile.shape ) 
+            # print(dffile.columns ) 
+
+            unnamed_col = [c for c in dffile.columns if bool(re.search(r'Unnamed', c))]
+
+            # print('len unnamed_col : {}'.format(len(unnamed_col)))
+            # print('unnamed : {}'.format(unnamed_col))
+
+            if len(unnamed_col)==1:
+                dffile['unnamed'] = dffile[unnamed_col]
+            elif len(unnamed_col) == 0:
+                 dffile['unnamed'] = 'NoUnnamed'
+            else:
+                dffile['unnamed'] = dffile.loc[:,unnamed_col].astype(str).agg('-'.join, axis=1)
+
+
+            # print('unamed col', dffile['unnamed'] )
+            # print('2 ', dffile.shape ) 
+
+            dffile = dffile.drop(columns = unnamed_col)
+            # print(dffile.columns ) 
+
+            # print(dffile.head() ) 
+
+            # print('3 ', dffile.shape ) 
+            # print(dffile.columns ) 
+
+            return dffile
+
     def append_values(self):
         '''
         method for filling the lists
@@ -863,7 +911,7 @@ class ParseTreeFolder():
 
             if self.presentfile != 'No file':
                 for elem in self.listOfFiles[d]:
-                    # print(elem)
+                    print('Parsed file is: {}'.format(os.path.splitext(str(os.path.basename(elem)))[0]))
                     if self.file_or_folder=='1':
                         if self.method_choice == '2':
                             skip=1
@@ -872,25 +920,28 @@ class ParseTreeFolder():
                     else:
                         skip = 0
 
-                    try:
-                        df = ParseFile(path = elem, skipr=skip).clean_file()
-                    except:
-                        encodi='latin'
-                        df = ParseFile(path = elem, skipr=skip, encod=encodi).clean_file()
+                    df = self._evaluate_file(elem = elem, skip = skip)
 
-                    if df.shape[1] == 1:
-                        separ=';'
-                        try:
-                            df = ParseFile(path = elem, sepa=separ, skipr=skip).clean_file()
-                        except:
-                            encodi='latin'
-                            df = ParseFile(path = elem, skipr=skip, sepa=separ, encod=encodi).clean_file()
+                    # try:
+                    #     df = ParseFile(path = elem, skipr=skip).clean_file()
+                    # except:
+                    #     encodi='latin'
+                    #     df = ParseFile(path = elem, skipr=skip, encod=encodi).clean_file()
+
+                    # if df.shape[1] == 1:
+                    #     separ=';'
+                    #     try:
+                    #         df = ParseFile(path = elem, sepa=separ, skipr=skip).clean_file()
+                    #     except:
+                    #         encodi='latin'
+                    #         df = ParseFile(path = elem, skipr=skip, sepa=separ, encod=encodi).clean_file()
+                    print('Pop is: {}'.format(df['Sampling_location'].unique()))
 
                     # print(df)
                     li.append(df)
 
                 self.frame = pd.concat(li, axis=0, ignore_index=True, sort=False)
-                print('shape of frame is {}'.format(self.frame.shape))
+                print('shape of data frame is {}'.format(self.frame.shape))
                 self.check_frame_num()
                 self.check_frame_group()
                 self.check_frame_empty()
@@ -920,12 +971,14 @@ class ParseTreeFolder():
         print('data frame summary')
         print('\nnumerical columns\n')
         for i in num_col:
-            print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}, min is : {3:.2f}, max is : {4:.2f}'.format(i,np.mean(self.frame[i]),np.std(self.frame[i]),np.min(self.frame[i]),np.max(self.frame[i])))
+            print('- for : {0}, mean is : {1:.2f}, sd is : {2:.2f}, min is : {3:.2f}, max is : {4:.2f}'.format(i,np.mean(self.final_frame[i]),\
+                np.std(self.final_frame[i]),np.min(self.final_frame[i]),np.max(self.final_frame[i])))
 
         print('\ncategorical columns')
         for i in group_col+['Note']:
-            print('\n- for : {}, categories are : {}'.format(i,self.frame[i].unique().tolist()))
-            print(self.frame[i].value_counts())
+            print('\n- for : {}, categories are : {}'.format(i,self.final_frame[i].unique().tolist()))
+            if i != 'Comment':
+                print(self.final_frame[i].value_counts())
 
     def save_finaldf(self):
         '''
