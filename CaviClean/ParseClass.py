@@ -4,7 +4,7 @@ import re
 print('------------------------------------------------------------------------')
 print('---------------                                    ---------------------')
 print('---------------              CaviClean             ---------------------')
-print('---------------                V6.00               ---------------------')
+print('---------------                V6.01               ---------------------')
 print('---------------                                    ---------------------')
 print('------------------------------------------------------------------------')
 time.sleep(1)
@@ -35,10 +35,10 @@ class ParseFile():
         import os 
         
         try:
-            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa)
+            self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, index_col=False)
         except:
             try:
-                self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod)
+                self.file = pd.read_csv(path, skiprows=skipr, sep=sepa, encoding=encod, index_col=False)
             except:
                 print('failed : {}'.format(os.path.basename(path)))
                 pass
@@ -104,13 +104,13 @@ class ParseTreeFolder():
             self.path = folder.replace('/','/')
             print('\n\n\nroot path is {}'.format(self.path))
 
-            print('''
-            which method do you want to use for detecting cavisoft files ?
+            # print('''
+            # which method do you want to use for detecting cavisoft files ?
 
-            1: Detect files named with number (e.g. 180.csv or 180.1.csv)
-            2: Detect string 'cavisoft' in the first row
-            ''')
-            self.method_choice = self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
+            # 1: Detect files named with number (e.g. 180.csv or 180.1.csv)
+            # 2: Detect string 'cavisoft' in the first row
+            # ''')
+            self.method_choice = '2'#self._get_valid_input('What do you want to do ? Choose one of : ', ('1','2'))
 
         if self.file_or_folder== '2':
             Tk().withdraw()
@@ -907,11 +907,12 @@ class ParseTreeFolder():
                 self.presentfile=self.listOfFiles[d][0]
             except:
                 self.presentfile = 'No file'
-            print('parsing list of files from : {}'.format(self.presentfile))
+            # print('parsing list of files from : {}'.format(self.presentfile))
 
             if self.presentfile != 'No file':
-                for elem in self.listOfFiles[d]:
-                    print('Parsed file is: {}'.format(os.path.splitext(str(os.path.basename(elem)))[0]))
+                for nenum, elem in enumerate(self.listOfFiles[d]):
+                    if nenum ==0:
+                        print('Parsed files from: {}.csv'.format(os.path.splitext(str(os.path.basename(elem)))[0]))
                     if self.file_or_folder=='1':
                         if self.method_choice == '2':
                             skip=1
@@ -935,7 +936,8 @@ class ParseTreeFolder():
                     #     except:
                     #         encodi='latin'
                     #         df = ParseFile(path = elem, skipr=skip, sepa=separ, encod=encodi).clean_file()
-                    print('Pop is: {}'.format(df['Sampling_location'].unique()))
+                    if nenum ==0:
+                        print('Pop is: {}'.format(df['Sampling_location'].unique()[0]))
 
                     # print(df)
                     li.append(df)
